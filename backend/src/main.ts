@@ -68,8 +68,14 @@ async function bootstrap() {
     logger.log(`Swagger: http://localhost:${port}/${prefix}/docs`);
   }
 
-  await app.listen(port);
-  logger.log(`🚀 Learnitali API running at http://localhost:${port}/${prefix}/${version}`);
+  // Health check endpoint (before global prefix)
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/api/v1/health', (_req: unknown, res: { json: (o: object) => void }) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  await app.listen(port, '0.0.0.0');
+  logger.log(`🚀 Learnitali API running at http://0.0.0.0:${port}/${prefix}/${version}`);
   logger.log(`Environment: ${config.get('app.env')}`);
 }
 
