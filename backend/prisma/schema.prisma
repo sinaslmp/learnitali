@@ -1,0 +1,1235 @@
+// ============================================================
+// Learnitali Platform — Complete Prisma Schema
+// PostgreSQL + Prisma ORM
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────
+
+enum UserRole {
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+  PENDING_VERIFICATION
+}
+
+enum Difficulty {
+  BEGINNER
+  ELEMENTARY
+  PRE_INTERMEDIATE
+  INTERMEDIATE
+  UPPER_INTERMEDIATE
+  ADVANCED
+}
+
+enum ContentLanguage {
+  IT  // Italian
+  FA  // Persian
+  EN  // English
+}
+
+enum LessonSectionType {
+  OVERVIEW
+  VOCABULARY
+  GRAMMAR
+  READING
+  LISTENING
+  SPEAKING
+  WRITING
+  EXERCISES
+  QUIZ
+  NOTES
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  FILL_BLANK
+  MATCHING
+  WRITTEN_ANSWER
+  ORDERING
+  AUDIO_RESPONSE
+}
+
+enum FlashcardState {
+  NEW
+  LEARNING
+  REVIEW
+  RELEARNING
+  GRADUATED
+}
+
+enum FlashcardRating {
+  AGAIN   // 0 — completely forgot
+  HARD    // 1 — recalled with difficulty
+  GOOD    // 2 — recalled correctly
+  EASY    // 3 — recalled perfectly
+}
+
+enum AchievementType {
+  STREAK
+  VOCABULARY
+  LESSONS_COMPLETED
+  QUIZ_SCORE
+  STUDY_TIME
+  FLASHCARDS
+  GRAMMAR
+  SPECIAL
+}
+
+enum NotificationType {
+  STUDY_REMINDER
+  ACHIEVEMENT_UNLOCKED
+  COURSE_UPDATE
+  SYSTEM
+  TEACHER_FEEDBACK
+}
+
+enum FileType {
+  AUDIO
+  PDF
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+enum StorageProvider {
+  S3
+  LOCAL
+}
+
+enum SubscriptionPlan {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  PAST_DUE
+  TRIAL
+}
+
+enum CertificateStatus {
+  PENDING
+  ISSUED
+  REVOKED
+}
+
+enum StudySessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+// ─────────────────────────────────────────────────────────────
+// USER DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id                    String             @id @default(cuid())
+  email                 String             @unique
+  username              String?            @unique
+  passwordHash          String?
+  role                  UserRole           @default(STUDENT)
+  status                UserStatus         @default(PENDING_VERIFICATION)
+  emailVerified         Boolean            @default(false)
+  emailVerifiedAt       DateTime?
+  lastLoginAt           DateTime?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  // Relations
+  profile               UserProfile?
+  settings              UserSettings?
+  socialAccounts        SocialAccount[]
+  refreshTokens         RefreshToken[]
+  passwordResetTokens   PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  subscription          Subscription?
+
+  // Learning relations
+  enrollments           Enrollment[]
+  studySessions         StudySession[]
+  progressRecords       ProgressRecord[]
+  lessonProgress        LessonProgress[]
+  vocabularyProgress    VocabularyProgress[]
+  grammarProgress       GrammarProgress[]
+  quizAttempts          QuizAttempt[]
+  flashcardReviews      FlashcardReview[]
+  flashcardDecks        FlashcardDeck[]
+  notes                 Note[]
+  bookmarks             Bookmark[]
+  achievements          UserAchievement[]
+  certificates          Certificate[]
+  notifications         Notification[]
+  studyStreaks           StudyStreak[]
+
+  // Teacher/Admin relations
+  createdCourses        Course[]           @relation("CourseCreator")
+  teacherStudents       TeacherStudent[]   @relation("TeacherRelation")
+  studentTeachers       TeacherStudent[]   @relation("StudentRelation")
+  teacherFeedback       TeacherFeedback[]  @relation("TeacherFeedback")
+  receivedFeedback      TeacherFeedback[]  @relation("StudentFeedback")
+
+  @@map("users")
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+model UserProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  firstName       String?
+  lastName        String?
+  avatarUrl       String?
+  bio             String?
+  nativeLanguage  String    @default("fa")
+  targetLanguage  String    @default("it")
+  country         String?
+  timezone        String    @default("Asia/Tehran")
+  dateOfBirth     DateTime?
+  phoneNumber     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model UserSettings {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  theme              String   @default("system")
+  fontSize           String   @default("md")
+  language           String   @default("fa")
+  showTranslations   Boolean  @default(true)
+  autoPlayAudio      Boolean  @default(false)
+  studyReminderTime  String?
+  studyReminderDays  Int[]    @default([1,2,3,4,5])
+  dailyGoalMinutes   Int      @default(20)
+  flashcardAlgorithm String   @default("sm2")
+  emailNotifications Boolean  @default(true)
+  pushNotifications  Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+// ─────────────────────────────────────────────────────────────
+// AUTH DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model SocialAccount {
+  id           String   @id @default(cuid())
+  userId       String
+  provider     String   // google, facebook, apple
+  providerId   String
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  profileData  Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@map("social_accounts")
+}
+
+model RefreshToken {
+  id          String    @id @default(cuid())
+  userId      String
+  token       String    @unique
+  fingerprint String?   // device fingerprint
+  ipAddress   String?
+  userAgent   String?
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+  @@index([token])
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+  @@index([token])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+  @@index([token])
+}
+
+// ─────────────────────────────────────────────────────────────
+// SUBSCRIPTION DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  plan               SubscriptionPlan   @default(FREE)
+  status             SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId   String?
+  stripeSubId        String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean            @default(false)
+  trialEndsAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+// ─────────────────────────────────────────────────────────────
+// RBAC DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Permission {
+  id          String             @id @default(cuid())
+  name        String             @unique // e.g. "course:create", "user:ban"
+  resource    String             // e.g. "course", "user"
+  action      String             // e.g. "create", "read", "update", "delete"
+  description String?
+  createdAt   DateTime           @default(now())
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+  @@index([resource, action])
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        UserRole         @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ─────────────────────────────────────────────────────────────
+// COURSE DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Course {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  title           String
+  titleFa         String
+  description     String
+  descriptionFa   String
+  language        String     @default("it")    // target language
+  nativeLanguage  String     @default("fa")    // instruction language
+  level           Difficulty @default(BEGINNER)
+  coverImageUrl   String?
+  isPublished     Boolean    @default(false)
+  isFeatured      Boolean    @default(false)
+  creatorId       String
+  totalLessons    Int        @default(0)
+  estimatedHours  Float      @default(0)
+  sortOrder       Int        @default(0)
+  metadata        Json?      // flexible extra data
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  creator     User         @relation("CourseCreator", fields: [creatorId], references: [id])
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  tags        CourseTag[]
+
+  @@map("courses")
+  @@index([slug])
+  @@index([isPublished])
+  @@index([level])
+}
+
+model CourseTag {
+  courseId String
+  tag      String
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, tag])
+  @@map("course_tags")
+}
+
+model Enrollment {
+  id           String    @id @default(cuid())
+  userId       String
+  courseId     String
+  enrolledAt   DateTime  @default(now())
+  completedAt  DateTime?
+  lastAccessAt DateTime?
+  isActive     Boolean   @default(true)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+// ─────────────────────────────────────────────────────────────
+// LESSON DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Lesson {
+  id               String     @id @default(cuid())
+  courseId         String
+  number           Int
+  slug             String
+  title            String
+  titleFa          String
+  subtitle         String?
+  subtitleFa       String?
+  overview         String
+  overviewFa       String
+  objectives       String[]
+  objectivesFa     String[]
+  colorGradient    String     @default("from-blue-500 to-cyan-500")
+  iconEmoji        String     @default("📚")
+  estimatedMinutes Int        @default(45)
+  difficulty       Difficulty @default(BEGINNER)
+  isPublished      Boolean    @default(false)
+  sortOrder        Int        @default(0)
+  pdfDocumentId    String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  pdf             PDFDocument?      @relation(fields: [pdfDocumentId], references: [id])
+  sections        LessonSection[]
+  vocabulary      VocabularyItem[]
+  grammarTopics   GrammarTopic[]
+  readingTexts    ReadingText[]
+  listeningTracks ListeningTrack[]
+  speakingExs     SpeakingExercise[]
+  writingExs      WritingExercise[]
+  quizzes         Quiz[]
+  flashcards      Flashcard[]
+  lessonProgress  LessonProgress[]
+  bookmarks       Bookmark[]
+
+  @@unique([courseId, number])
+  @@unique([courseId, slug])
+  @@map("lessons")
+  @@index([courseId, isPublished])
+}
+
+model LessonSection {
+  id          String            @id @default(cuid())
+  lessonId    String
+  type        LessonSectionType
+  title       String?
+  titleFa     String?
+  content     Json?
+  sortOrder   Int               @default(0)
+  isVisible   Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_sections")
+  @@index([lessonId, type])
+}
+
+// ─────────────────────────────────────────────────────────────
+// VOCABULARY DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model VocabularyItem {
+  id             String     @id @default(cuid())
+  lessonId       String
+  word           String
+  translation    String
+  pronunciation  String
+  exampleIt      String
+  exampleFa      String
+  difficulty     Difficulty @default(BEGINNER)
+  category       String
+  partOfSpeech   String?    // noun, verb, adjective, etc.
+  gender         String?    // masculine, feminine (for Italian nouns)
+  plural         String?
+  conjugation    Json?      // for verbs
+  synonyms       String[]
+  antonyms       String[]
+  tags           String[]
+  audioFileId    String?
+  imageUrl       String?
+  sortOrder      Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  lesson             Lesson               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  audio              AudioFile?           @relation(fields: [audioFileId], references: [id])
+  vocabularyProgress VocabularyProgress[]
+  flashcards         Flashcard[]
+
+  @@map("vocabulary_items")
+  @@index([lessonId])
+  @@index([category])
+  @@index([word])
+}
+
+model VocabularyProgress {
+  id               String    @id @default(cuid())
+  userId           String
+  vocabularyItemId String
+  isLearned        Boolean   @default(false)
+  isFavorited      Boolean   @default(false)
+  reviewCount      Int       @default(0)
+  lastReviewedAt   DateTime?
+  learnedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabularyItem VocabularyItem @relation(fields: [vocabularyItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabularyItemId])
+  @@map("vocabulary_progress")
+  @@index([userId, isLearned])
+}
+
+// ─────────────────────────────────────────────────────────────
+// GRAMMAR DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model GrammarTopic {
+  id              String   @id @default(cuid())
+  lessonId        String
+  title           String
+  titleFa         String
+  explanation     String
+  explanationFa   String
+  examples        Json     // [{italian, persian}]
+  commonMistakes  String[]
+  tips            String[]
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  lesson          Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  exercises       GrammarExercise[]
+  grammarProgress GrammarProgress[]
+
+  @@map("grammar_topics")
+  @@index([lessonId])
+}
+
+model GrammarExercise {
+  id             String       @id @default(cuid())
+  grammarTopicId String
+  type           QuestionType
+  question       String
+  questionFa     String?
+  options        String[]
+  correctAnswer  String
+  explanation    String?
+  explanationFa  String?
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  grammarTopic GrammarTopic @relation(fields: [grammarTopicId], references: [id], onDelete: Cascade)
+
+  @@map("grammar_exercises")
+}
+
+model GrammarProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  grammarTopicId String
+  isCompleted    Boolean   @default(false)
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammarTopic GrammarTopic @relation(fields: [grammarTopicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, grammarTopicId])
+  @@map("grammar_progress")
+}
+
+// ─────────────────────────────────────────────────────────────
+// READING DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model ReadingText {
+  id               String    @id @default(cuid())
+  lessonId         String
+  title            String
+  titleFa          String
+  content          String
+  translation      String
+  highlightedWords String[]  // vocabulary item ids
+  audioFileId      String?
+  wordCount        Int       @default(0)
+  readingTime      Int       @default(3) // minutes
+  sortOrder        Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  lesson     Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  audioFile  AudioFile? @relation(fields: [audioFileId], references: [id])
+
+  @@map("reading_texts")
+  @@index([lessonId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// LISTENING DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model ListeningTrack {
+  id          String    @id @default(cuid())
+  lessonId    String
+  title       String
+  titleFa     String
+  transcript  String
+  translation String
+  duration    Int?      // seconds
+  audioFileId String?
+  difficulty  Difficulty @default(BEGINNER)
+  speakerInfo Json?     // [{name, gender, accent}]
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  audioFile AudioFile? @relation(fields: [audioFileId], references: [id])
+
+  @@map("listening_tracks")
+  @@index([lessonId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// SPEAKING DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model SpeakingExercise {
+  id          String   @id @default(cuid())
+  lessonId    String
+  type        String   // conversation, roleplay, pronunciation, challenge
+  title       String
+  titleFa     String
+  scenario    String
+  scenarioFa  String
+  lines       Json     // [{speaker, text, translation}]
+  tips        String[]
+  audioFileId String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  audioFile AudioFile? @relation(fields: [audioFileId], references: [id])
+
+  @@map("speaking_exercises")
+  @@index([lessonId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// WRITING DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model WritingExercise {
+  id           String    @id @default(cuid())
+  lessonId     String
+  title        String
+  titleFa      String
+  prompt       String
+  promptFa     String
+  guidelines   String[]
+  minWords     Int       @default(50)
+  maxWords     Int       @default(200)
+  exampleAnswer String?
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  lesson      Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  submissions WritingSubmission[]
+
+  @@map("writing_exercises")
+  @@index([lessonId])
+}
+
+model WritingSubmission {
+  id                String    @id @default(cuid())
+  userId            String
+  writingExerciseId String
+  content           String
+  wordCount         Int
+  feedback          String?
+  score             Float?
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  writingExercise WritingExercise @relation(fields: [writingExerciseId], references: [id], onDelete: Cascade)
+
+  @@map("writing_submissions")
+  @@index([userId, writingExerciseId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// QUIZ DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Quiz {
+  id            String   @id @default(cuid())
+  lessonId      String
+  title         String
+  titleFa       String
+  description   String?
+  timeLimit     Int?     // seconds, null = no limit
+  passingScore  Int      @default(70)
+  maxAttempts   Int?     // null = unlimited
+  shuffleQs     Boolean  @default(false)
+  showAnswers   Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lesson    Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@map("quizzes")
+  @@index([lessonId])
+}
+
+model QuizQuestion {
+  id            String       @id @default(cuid())
+  quizId        String
+  type          QuestionType
+  question      String
+  questionFa    String?
+  questionAudio String?      // audio file id
+  options       String[]
+  correctAnswer String
+  explanation   String?
+  explanationFa String?
+  points        Int          @default(1)
+  timeLimit     Int?
+  mediaUrl      String?
+  sortOrder     Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@map("quiz_questions")
+  @@index([quizId])
+}
+
+model QuizAttempt {
+  id          String    @id @default(cuid())
+  userId      String
+  quizId      String
+  score       Float
+  totalPoints Int
+  earnedPoints Int
+  timeTaken   Int?      // seconds
+  passed      Boolean
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz    Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+
+  @@map("quiz_attempts")
+  @@index([userId, quizId])
+  @@index([userId])
+}
+
+model QuizAnswer {
+  id             String   @id @default(cuid())
+  quizAttemptId  String
+  quizQuestionId String
+  userAnswer     String
+  isCorrect      Boolean
+  pointsEarned   Int      @default(0)
+  timeTaken      Int?
+  createdAt      DateTime @default(now())
+
+  quizAttempt  QuizAttempt  @relation(fields: [quizAttemptId], references: [id], onDelete: Cascade)
+  quizQuestion QuizQuestion @relation(fields: [quizQuestionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_answers")
+  @@index([quizAttemptId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// FLASHCARD DOMAIN (Anki-inspired SM-2 algorithm)
+// ─────────────────────────────────────────────────────────────
+
+model FlashcardDeck {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  lessonId    String?
+  isPublic    Boolean  @default(false)
+  cardCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcards Flashcard[]
+  reviews    FlashcardReview[]
+
+  @@map("flashcard_decks")
+  @@index([userId])
+}
+
+model Flashcard {
+  id              String         @id @default(cuid())
+  lessonId        String?
+  deckId          String?
+  vocabularyItemId String?
+  front           String
+  back            String
+  example         String?
+  exampleFa       String?
+  pronunciation   String?
+  audioFileId     String?
+  imageUrl        String?
+  difficulty      Difficulty     @default(BEGINNER)
+  tags            String[]
+  sortOrder       Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  lesson         Lesson?          @relation(fields: [lessonId], references: [id])
+  deck           FlashcardDeck?   @relation(fields: [deckId], references: [id])
+  vocabularyItem VocabularyItem?  @relation(fields: [vocabularyItemId], references: [id])
+  audioFile      AudioFile?       @relation(fields: [audioFileId], references: [id])
+  reviews        FlashcardReview[]
+
+  @@map("flashcards")
+  @@index([lessonId])
+  @@index([deckId])
+}
+
+model FlashcardReview {
+  id             String          @id @default(cuid())
+  userId         String
+  flashcardId    String
+  deckId         String?
+  state          FlashcardState  @default(NEW)
+  rating         FlashcardRating?
+  // SM-2 algorithm fields
+  easeFactor     Float           @default(2.5)
+  interval       Int             @default(0)  // days
+  repetitions    Int             @default(0)
+  dueDate        DateTime        @default(now())
+  lastReviewedAt DateTime?
+  reviewedAt     DateTime        @default(now())
+  timeSpent      Int?            // milliseconds
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard Flashcard      @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  deck      FlashcardDeck? @relation(fields: [deckId], references: [id])
+
+  @@unique([userId, flashcardId])
+  @@map("flashcard_reviews")
+  @@index([userId, dueDate])
+  @@index([userId, state])
+}
+
+// ─────────────────────────────────────────────────────────────
+// PROGRESS DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model ProgressRecord {
+  id                   String    @id @default(cuid())
+  userId               String
+  courseId             String
+  totalXP              Int       @default(0)
+  completedLessons     Int       @default(0)
+  totalLessons         Int       @default(0)
+  completedVocab       Int       @default(0)
+  totalVocab           Int       @default(0)
+  completedGrammar     Int       @default(0)
+  totalGrammar         Int       @default(0)
+  averageQuizScore     Float?
+  totalStudyMinutes    Int       @default(0)
+  lastStudiedAt        DateTime?
+  completionPercent    Float     @default(0)
+  updatedAt            DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("progress_records")
+  @@index([userId])
+}
+
+model LessonProgress {
+  id                 String          @id @default(cuid())
+  userId             String
+  lessonId           String
+  completedSections  LessonSectionType[]
+  studyTimeMinutes   Int             @default(0)
+  lastStudiedAt      DateTime?
+  isCompleted        Boolean         @default(false)
+  completedAt        DateTime?
+  xpEarned           Int             @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model StudySession {
+  id          String             @id @default(cuid())
+  userId      String
+  lessonId    String?
+  courseId    String?
+  startedAt   DateTime           @default(now())
+  endedAt     DateTime?
+  durationMin Int?
+  xpEarned    Int                @default(0)
+  status      StudySessionStatus @default(ACTIVE)
+  activities  Json?              // [{type, itemId, timestamp, result}]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("study_sessions")
+  @@index([userId])
+  @@index([userId, startedAt])
+}
+
+model StudyStreak {
+  id           String   @id @default(cuid())
+  userId       String
+  date         DateTime @db.Date
+  minutesStudied Int    @default(0)
+  xpEarned     Int      @default(0)
+  goalMet      Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("study_streaks")
+  @@index([userId, date])
+}
+
+// ─────────────────────────────────────────────────────────────
+// NOTES & BOOKMARKS
+// ─────────────────────────────────────────────────────────────
+
+model Note {
+  id        String    @id @default(cuid())
+  userId    String
+  lessonId  String?
+  courseId  String?
+  section   LessonSectionType?
+  title     String?
+  content   String
+  tags      String[]
+  isPinned  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notes")
+  @@index([userId])
+  @@index([userId, lessonId])
+}
+
+model Bookmark {
+  id         String    @id @default(cuid())
+  userId     String
+  lessonId   String?
+  courseId   String?
+  type       String    // lesson, vocabulary, grammar, topic
+  refId      String    // the bookmarked entity id
+  note       String?
+  createdAt  DateTime  @default(now())
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson? @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, type, refId])
+  @@map("bookmarks")
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// ACHIEVEMENTS DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Achievement {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  nameFa      String
+  description String
+  descFa      String
+  type        AchievementType
+  iconUrl     String?
+  condition   Json            // {type, threshold, ...}
+  xpReward    Int             @default(0)
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String    @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime  @default(now())
+  progress      Float     @default(0) // 0-100
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// CERTIFICATES DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Certificate {
+  id           String            @id @default(cuid())
+  userId       String
+  courseId     String
+  status       CertificateStatus @default(PENDING)
+  certificateNo String           @unique
+  issuedAt     DateTime?
+  expiresAt    DateTime?
+  pdfUrl       String?
+  metadata     Json?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("certificates")
+  @@index([userId])
+  @@index([certificateNo])
+}
+
+// ─────────────────────────────────────────────────────────────
+// FILE STORAGE DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model AudioFile {
+  id           String          @id @default(cuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int             // bytes
+  url          String
+  storageKey   String          @unique
+  provider     StorageProvider @default(S3)
+  duration     Int?            // seconds
+  language     String?
+  transcript   String?
+  uploadedBy   String?
+  metadata     Json?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  vocabularyItems  VocabularyItem[]
+  readingTexts     ReadingText[]
+  listeningTracks  ListeningTrack[]
+  speakingExs      SpeakingExercise[]
+  flashcards       Flashcard[]
+
+  @@map("audio_files")
+}
+
+model PDFDocument {
+  id           String          @id @default(cuid())
+  filename     String
+  originalName String
+  mimeType     String          @default("application/pdf")
+  size         Int
+  url          String
+  storageKey   String          @unique
+  provider     StorageProvider @default(S3)
+  pages        Int?
+  description  String?
+  uploadedBy   String?
+  metadata     Json?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  lessons Lesson[]
+
+  @@map("pdf_documents")
+}
+
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATIONS DOMAIN
+// ─────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  titleFa   String?
+  body      String
+  bodyFa    String?
+  data      Json?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// TEACHER MODULE
+// ─────────────────────────────────────────────────────────────
+
+model TeacherStudent {
+  id         String   @id @default(cuid())
+  teacherId  String
+  studentId  String
+  courseId   String?
+  assignedAt DateTime @default(now())
+  isActive   Boolean  @default(true)
+
+  teacher User @relation("TeacherRelation", fields: [teacherId], references: [id], onDelete: Cascade)
+  student User @relation("StudentRelation", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, studentId])
+  @@map("teacher_students")
+}
+
+model TeacherFeedback {
+  id          String    @id @default(cuid())
+  teacherId   String
+  studentId   String
+  lessonId    String?
+  submissionId String?
+  content     String
+  score       Float?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  teacher User @relation("TeacherFeedback", fields: [teacherId], references: [id], onDelete: Cascade)
+  student User @relation("StudentFeedback", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_feedback")
+  @@index([studentId])
+  @@index([teacherId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// AUDIT LOG
+// ─────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   // e.g. "user.banned", "course.created"
+  resource   String
+  resourceId String?
+  ipAddress  String?
+  userAgent  String?
+  oldData    Json?
+  newData    Json?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([resource, resourceId])
+  @@index([createdAt])
+}

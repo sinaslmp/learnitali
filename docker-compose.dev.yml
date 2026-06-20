@@ -1,0 +1,52 @@
+version: '3.9'
+
+# Development override — only infra, not the apps
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: learnitali_postgres_dev
+    environment:
+      POSTGRES_USER: learnitali
+      POSTGRES_PASSWORD: learnitali_secret
+      POSTGRES_DB: learnitali_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - learnitali_dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: learnitali_redis_dev
+    command: redis-server --maxmemory 128mb
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - learnitali_dev
+
+  minio:
+    image: minio/minio:latest
+    container_name: learnitali_minio_dev
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_dev_data:/data
+    networks:
+      - learnitali_dev
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  minio_dev_data:
+
+networks:
+  learnitali_dev:
+    driver: bridge
