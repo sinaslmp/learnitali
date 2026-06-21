@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 import { RolesGuard } from '@/common/guards/roles.guard';
 
 // Feature modules
+import { HealthModule } from '@/modules/health/health.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UsersModule } from '@/modules/users/users.module';
 import { CoursesModule } from '@/modules/courses/courses.module';
@@ -60,6 +61,7 @@ import { NotesModule } from '@/modules/notes/notes.module';
     PrismaModule,
 
     // Feature modules
+    HealthModule,
     AuthModule,
     UsersModule,
     CoursesModule,

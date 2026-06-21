@@ -1,4 +1,4 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
@@ -23,15 +23,17 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
-  // API versioning
-  app.enableVersioning({ type: VersioningType.URI });
-
-  // Global prefix
-  app.setGlobalPrefix(`${prefix}/${version}`);
-
   // Body size
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // Global prefix (must be before swagger)
+  app.setGlobalPrefix(`${prefix}/${version}`, {
+    exclude: ['health'],
+  });
+
+  // API versioning
+  app.enableVersioning({ type: VersioningType.URI });
 
   // Global validation
   app.useGlobalPipes(
@@ -44,38 +46,29 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger documentation
-  if (config.get('app.env') !== 'production') {
-    const doc = new DocumentBuilder()
-      .setTitle('Learnitali API')
-      .setDescription('Italian learning platform REST API for Persian speakers')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .addTag('Auth', 'Authentication & Authorization')
-      .addTag('Users', 'User management')
-      .addTag('Courses', 'Course management')
-      .addTag('Lessons', 'Lesson content')
-      .addTag('Progress', 'Learning progress tracking')
-      .addTag('Quizzes', 'Quiz system')
-      .addTag('Flashcards', 'SM-2 flashcard system')
-      .addTag('Files', 'File storage (audio, PDF, images)')
-      .build();
+  // Swagger (always on in all envs for now)
+  const doc = new DocumentBuilder()
+    .setTitle('Learnitali API')
+    .setDescription('Italian learning platform REST API for Persian speakers')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('Auth', 'Authentication & Authorization')
+    .addTag('Users', 'User management')
+    .addTag('Courses', 'Course management')
+    .addTag('Progress', 'Learning progress tracking')
+    .addTag('Quizzes', 'Quiz system')
+    .addTag('Flashcards', 'SM-2 flashcard system')
+    .addTag('Files', 'File storage (audio, PDF, images)')
+    .build();
 
-    const document = SwaggerModule.createDocument(app, doc);
-    SwaggerModule.setup(`${prefix}/docs`, app, document, {
-      swaggerOptions: { persistAuthorization: true },
-    });
-    logger.log(`Swagger: http://localhost:${port}/${prefix}/docs`);
-  }
-
-  // Health check endpoint (before global prefix)
-  const httpAdapter = app.getHttpAdapter();
-  httpAdapter.get('/api/v1/health', (_req: unknown, res: { json: (o: object) => void }) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  const document = SwaggerModule.createDocument(app, doc);
+  SwaggerModule.setup(`${prefix}/docs`, app, document, {
+    swaggerOptions: { persistAuthorization: true },
   });
 
   await app.listen(port, '0.0.0.0');
-  logger.log(`🚀 Learnitali API running at http://0.0.0.0:${port}/${prefix}/${version}`);
+  logger.log(`🚀 Learnitali API: http://0.0.0.0:${port}/${prefix}/${version}`);
+  logger.log(`📚 Swagger: http://0.0.0.0:${port}/${prefix}/docs`);
   logger.log(`Environment: ${config.get('app.env')}`);
 }
 
