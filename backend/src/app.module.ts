@@ -45,16 +45,11 @@ import { NotesModule } from '@/modules/notes/notes.module';
       inject: [ConfigService],
     }),
 
-    // Redis Cache
-    CacheModule.registerAsync({
+    // In-memory cache (cache-manager v5, compatible with @nestjs/cache-manager v3)
+    CacheModule.register({
       isGlobal: true,
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        store: 'memory', // replace with ioredis store in production
-        ttl: config.get<number>('redis.ttl', 300),
-        max: 1000,
-      }),
-      inject: [ConfigService],
+      ttl: 300,
+      max: 1000,
     }),
 
     // Core
