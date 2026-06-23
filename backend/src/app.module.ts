@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { CacheModule } from '@nestjs/cache-manager';
 
 import configuration from '@/config/configuration';
 import { PrismaModule } from '@/prisma/prisma.module';
@@ -45,12 +44,6 @@ import { NotesModule } from '@/modules/notes/notes.module';
       inject: [ConfigService],
     }),
 
-    // In-memory cache (cache-manager v5, compatible with @nestjs/cache-manager v3)
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 300,
-      max: 1000,
-    }),
 
     // Core
     PrismaModule,
