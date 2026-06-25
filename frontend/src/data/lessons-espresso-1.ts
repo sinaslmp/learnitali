@@ -357,7 +357,7 @@ Studente: Grazie, studio molto!`,
 
   // ─── Lesson 3 ─────────────────────────────────────────────────────────────
   {
-    id: 3, slug: 'lesson-3',
+    id: 3, number: 3, bookSlug: BOOK_SLUG, slug: 'lesson-3', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'La famiglia',
     titleFa: 'خانواده',
     subtitle: 'Family & Relationships',
@@ -453,7 +453,7 @@ Studente: No, non ancora. Ma ho una ragazza!`,
 
   // ─── Lesson 4 ─────────────────────────────────────────────────────────────
   {
-    id: 4, slug: 'lesson-4',
+    id: 4, number: 4, bookSlug: BOOK_SLUG, slug: 'lesson-4', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Al bar',
     titleFa: 'در کافه',
     subtitle: 'Ordering at a Café',
@@ -583,7 +583,7 @@ Barista: Un euro di resto. Grazie e buona serata!`,
 
   // ─── Lesson 5 ─────────────────────────────────────────────────────────────
   {
-    id: 5, slug: 'lesson-5',
+    id: 5, number: 5, bookSlug: BOOK_SLUG, slug: 'lesson-5', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Che ore sono?',
     titleFa: 'ساعت چنده؟',
     subtitle: 'Time & Daily Routine',
@@ -678,7 +678,7 @@ B: موفق باشی!`,
 
   // ─── Lessons 6-10 (compact but complete) ─────────────────────────────────
   {
-    id: 6, slug: 'lesson-6',
+    id: 6, number: 6, bookSlug: BOOK_SLUG, slug: 'lesson-6', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Dove abiti?',
     titleFa: 'کجا زندگی می‌کنی؟',
     subtitle: 'Home & City',
@@ -764,7 +764,7 @@ Passante: Prego, buona giornata!`,
   },
 
   {
-    id: 7, slug: 'lesson-7',
+    id: 7, number: 7, bookSlug: BOOK_SLUG, slug: 'lesson-7', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Cosa fai nel tempo libero?',
     titleFa: 'وقت آزادت چی‌کار می‌کنی؟',
     subtitle: 'Hobbies & Free Time',
@@ -850,7 +850,7 @@ B: چه خوب! منم می‌خوام امتحان کنم!`,
   },
 
   {
-    id: 8, slug: 'lesson-8',
+    id: 8, number: 8, bookSlug: BOOK_SLUG, slug: 'lesson-8', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Andiamo a fare la spesa!',
     titleFa: 'بریم خرید!',
     subtitle: 'Shopping & Food',
@@ -941,7 +941,7 @@ Fruttivendolo: Cinquanta centesimi di resto. Grazie e buona giornata!`,
   },
 
   {
-    id: 9, slug: 'lesson-9',
+    id: 9, number: 9, bookSlug: BOOK_SLUG, slug: 'lesson-9', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Com\'è il tempo?',
     titleFa: 'هوا چطوره؟',
     subtitle: 'Weather & Seasons',
@@ -1021,7 +1021,7 @@ Fruttivendolo: Cinquanta centesimi di resto. Grazie e buona giornata!`,
   },
 
   {
-    id: 10, slug: 'lesson-10',
+    id: 10, number: 10, bookSlug: BOOK_SLUG, slug: 'lesson-10', pdfUrl: '/books/nuovo-espresso-1.pdf',
     title: 'Passato prossimo',
     titleFa: 'گذشته نزدیک',
     subtitle: 'Talking about the Past',
