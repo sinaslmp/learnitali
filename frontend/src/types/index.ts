@@ -1,6 +1,25 @@
 // ─── Core Domain Types ───────────────────────────────────────────────────────
 
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+
+// ─── Book ─────────────────────────────────────────────────────────────────────
+
+export interface Book {
+  slug: string;           // 'nuovo-espresso-1' … 'nuovo-espresso-4'
+  title: string;          // 'Nuovo Espresso 1'
+  titleFa: string;        // Persian title
+  level: string;          // 'A1', 'A2', 'B1', 'B1-B2'
+  levelLabel: string;     // Persian level label
+  description: string;
+  descriptionFa: string;
+  color: string;          // Tailwind gradient class (used in UI)
+  icon: string;
+  totalLessons: number;
+  estimatedHours: number;
+  pdfUrl: string;         // path under /books/
+  audioBasePath: string;  // path under /books/audio/
+  audioExt: string;       // 'mp3' | 'wma'
+}
 export type LessonSection =
   | 'overview'
   | 'vocabulary'
@@ -123,7 +142,9 @@ export interface Flashcard {
 // ─── Lesson ───────────────────────────────────────────────────────────────────
 
 export interface Lesson {
-  id: number;
+  id: number;              // globally unique routing ID (1-10 book1, 11-20 book2, …)
+  number: number;          // lesson number within its book (always 1-10)
+  bookSlug: string;        // 'nuovo-espresso-1' … 'nuovo-espresso-4'
   slug: string;
   title: string;           // Italian
   titleFa: string;         // Persian

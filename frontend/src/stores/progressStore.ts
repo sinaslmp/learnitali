@@ -240,7 +240,7 @@ export const useProgressStore = create<ProgressStore>()(
       },
 
       getOverallProgress: () => {
-        const total = 10; // 10 lessons
+        const total = 40; // 10 lessons × 4 books
         const completed = get().getCompletedLessons().length;
         return Math.round((completed / total) * 100);
       },

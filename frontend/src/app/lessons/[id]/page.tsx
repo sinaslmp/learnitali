@@ -10,13 +10,13 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useProgressStore } from '@/stores/progressStore';
-import { getLessonById } from '@/data/lessons';
+import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { LessonSection } from '@/types';
 import { cn } from '@/lib/utils';
 import {
   BookOpen, Brain, Headphones, Mic, PenLine, Dumbbell,
-  Trophy, FileText, ChevronRight, CheckCircle, Volume2, Star,
-  Clock, Target
+  Trophy, FileText, ChevronRight, ChevronLeft, CheckCircle, Volume2, Star,
+  Clock, Target, Download
 } from 'lucide-react';
 
 const SECTIONS: { id: LessonSection; label: string; icon: React.ElementType }[] = [
@@ -36,6 +36,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const { id } = use(params);
   const lesson = getLessonById(Number(id));
   if (!lesson) notFound();
+  const { prev, next } = getAdjacentLessons(lesson.id);
 
   const [activeSection, setActiveSection] = useState<LessonSection>('overview');
   const { getLessonProgress, markSectionComplete, addNote } = useProgressStore();
@@ -60,7 +61,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             <div className="flex items-start gap-4">
               <span className="text-5xl">{lesson.icon}</span>
               <div className="flex-1 text-right">
-                <Badge className="bg-white/20 text-white border-white/30 mb-2">درس {lesson.id}</Badge>
+                <Badge className="bg-white/20 text-white border-white/30 mb-2">درس {lesson.number}</Badge>
                 <h1 className="text-2xl lg:text-3xl font-bold">{lesson.titleFa}</h1>
                 <p className="text-white/80 italic mt-1">{lesson.title}</p>
                 <p className="text-white/70 text-sm mt-1">{lesson.subtitleFa}</p>
@@ -268,27 +269,18 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     </div>
                   </div>
 
-                  {/* Fake audio player */}
-                  <div className="bg-muted/50 rounded-xl p-4 flex items-center gap-4">
-                    <button className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors shrink-0">
-                      ▶
-                    </button>
-                    <div className="flex-1 space-y-1">
-                      <div className="h-1.5 bg-border rounded-full overflow-hidden">
-                        <div className="h-full w-0 bg-green-500 rounded-full" />
-                      </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>0:00</span>
-                        <span>0:{String(track.duration ?? 0).padStart(2, '0')}</span>
-                      </div>
+                  {/* Real audio player */}
+                  {track.audioUrl ? (
+                    <audio
+                      controls
+                      className="w-full rounded-xl"
+                      src={track.audioUrl}
+                    />
+                  ) : (
+                    <div className="bg-muted/50 rounded-xl p-4 text-center text-xs text-muted-foreground">
+                      فایل صوتی موجود نیست
                     </div>
-                    <div className="flex gap-1.5 text-xs text-muted-foreground">
-                      <button className="px-2 py-1 rounded border border-border hover:bg-accent">0.75x</button>
-                      <button className="px-2 py-1 rounded border border-green-500 bg-green-500/10 text-green-600">1x</button>
-                      <button className="px-2 py-1 rounded border border-border hover:bg-accent">1.5x</button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center">فایل صوتی بعداً اضافه می‌شود</p>
+                  )}
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -507,12 +499,50 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           )}
         </div>
 
-        {/* PDF section */}
-        <div className="border border-dashed border-border rounded-2xl p-6 text-center space-y-2">
-          <p className="text-2xl">📄</p>
-          <p className="font-semibold text-muted-foreground">PDF درس</p>
-          <p className="text-xs text-muted-foreground">فایل PDF این درس بعداً آپلود می‌شود</p>
-          <Button variant="outline" size="sm" disabled>دانلود PDF</Button>
+        {/* PDF + navigation */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* PDF download */}
+          {lesson.pdfUrl ? (
+            <a
+              href={lesson.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center gap-3 border border-border rounded-2xl p-5 hover:border-green-500/40 transition-colors group"
+            >
+              <span className="text-3xl">📄</span>
+              <div className="text-right flex-1">
+                <p className="font-semibold">PDF کتاب</p>
+                <p className="text-xs text-muted-foreground">{lesson.bookSlug}</p>
+              </div>
+              <Download size={18} className="text-muted-foreground group-hover:text-green-500 transition-colors" />
+            </a>
+          ) : (
+            <div className="flex-1 border border-dashed border-border rounded-2xl p-5 text-center text-xs text-muted-foreground">
+              PDF موجود نیست
+            </div>
+          )}
+
+          {/* Prev / Next lesson */}
+          <div className="flex gap-3">
+            {prev ? (
+              <a
+                href={`/lessons/${prev.id}`}
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl border border-border hover:border-green-500/40 transition-colors text-sm"
+              >
+                <ChevronRight size={16} />
+                <span className="text-muted-foreground">قبلی</span>
+              </a>
+            ) : null}
+            {next ? (
+              <a
+                href={`/lessons/${next.id}`}
+                className="flex items-center gap-2 px-4 py-3 rounded-2xl border border-border hover:border-green-500/40 transition-colors text-sm"
+              >
+                <span className="text-muted-foreground">بعدی</span>
+                <ChevronLeft size={16} />
+              </a>
+            ) : null}
+          </div>
         </div>
 
       </div>

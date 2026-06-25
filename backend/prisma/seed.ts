@@ -85,6 +85,57 @@ async function main() {
   });
   console.log(`✅ Course created: ${course.slug}`);
 
+  // ─── Nuovo Espresso 2, 3, 4 Courses ──────────────────────────
+  const additionalCourses = [
+    {
+      slug: 'nuovo-espresso-2',
+      title: 'Nuovo Espresso 2',
+      titleFa: 'نوئو اسپرسو ۲',
+      description: 'Elementary Italian course for Persian speakers based on Nuovo Espresso 2 textbook.',
+      descriptionFa: 'دوره ایتالیایی پایه برای فارسی‌زبانان بر اساس کتاب نوئو اسپرسو ۲.',
+      level: Difficulty.BEGINNER,
+      totalLessons: 10,
+      estimatedHours: 10,
+    },
+    {
+      slug: 'nuovo-espresso-3',
+      title: 'Nuovo Espresso 3',
+      titleFa: 'نوئو اسپرسو ۳',
+      description: 'Intermediate Italian course for Persian speakers based on Nuovo Espresso 3 textbook.',
+      descriptionFa: 'دوره ایتالیایی متوسط برای فارسی‌زبانان بر اساس کتاب نوئو اسپرسو ۳.',
+      level: Difficulty.INTERMEDIATE,
+      totalLessons: 10,
+      estimatedHours: 12,
+    },
+    {
+      slug: 'nuovo-espresso-4',
+      title: 'Nuovo Espresso 4',
+      titleFa: 'نوئو اسپرسو ۴',
+      description: 'Upper-intermediate Italian course for Persian speakers based on Nuovo Espresso 4 textbook.',
+      descriptionFa: 'دوره ایتالیایی بالاتر از متوسط برای فارسی‌زبانان بر اساس کتاب نوئو اسپرسو ۴.',
+      level: Difficulty.ADVANCED,
+      totalLessons: 10,
+      estimatedHours: 14,
+    },
+  ];
+
+  for (const c of additionalCourses) {
+    await prisma.course.upsert({
+      where: { slug: c.slug },
+      create: {
+        ...c,
+        language: 'it',
+        nativeLanguage: 'fa',
+        isPublished: true,
+        isFeatured: false,
+        creatorId: admin.id,
+        tags: { create: [{ tag: 'italian' }, { tag: c.level.toLowerCase() }, { tag: 'persian' }] },
+      },
+      update: { isPublished: true },
+    });
+    console.log(`✅ Course created: ${c.slug}`);
+  }
+
   // ─── Achievements ─────────────────────────────────────────────
   const achievements = [
     { slug: 'first-lesson', name: 'First Lesson', nameFa: 'اولین درس', description: 'Complete your first lesson', descFa: 'اولین درس را تموم کن', type: AchievementType.LESSONS_COMPLETED, condition: { threshold: 1 }, xpReward: 50 },

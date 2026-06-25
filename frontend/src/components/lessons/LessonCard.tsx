@@ -35,7 +35,7 @@ export function LessonCard({ lesson, isLocked }: LessonCardProps) {
         <div className={cn('h-24 bg-gradient-to-br flex items-center justify-between px-5', lesson.color)}>
           <span className="text-4xl">{lesson.icon}</span>
           <div className="text-left">
-            <p className="text-white/70 text-xs font-medium">درس {lesson.id}</p>
+            <p className="text-white/70 text-xs font-medium">درس {lesson.number}</p>
             {isCompleted && (
               <Badge variant="success" className="mt-1 bg-white/20 text-white border-white/30">
                 ✓ تمام شد
