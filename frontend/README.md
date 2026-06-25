@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learnitali — Frontend
+
+Next.js 16 frontend for the Learnitali Italian learning platform.
+
+> For full project documentation, architecture, and setup instructions see the [root README](../README.md).
+
+## Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS
+- **State**: Zustand
+- **Data Fetching**: React Query (TanStack Query)
+- **Auth**: JWT with refresh token rotation (handled via HTTP-only cookies)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js >= 18
+- Backend running on `http://localhost:4000` (see [backend setup](../backend/README.md))
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# From repo root, start infrastructure first:
+docker compose -f docker-compose.dev.yml up -d
+
+# Then:
+cd frontend
+cp .env.example .env.local   # set NEXT_PUBLIC_API_URL=http://localhost:4000
+npm install
+npm run dev -- --port 3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App runs at **http://localhost:3001**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+frontend/
+├── app/                  # Next.js 16 App Router
+│   ├── (auth)/           # Auth pages (login, register)
+│   ├── lessons/          # Lesson browser and detail pages
+│   ├── quiz/             # Quiz flow pages
+│   └── layout.tsx        # Root layout with providers
+├── components/
+│   ├── ui/               # Reusable UI primitives
+│   ├── lessons/          # Lesson-specific components
+│   └── quiz/             # Quiz components
+├── stores/               # Zustand state stores (auth, progress)
+├── lib/
+│   ├── api.ts            # Typed Axios instance + interceptors
+│   └── query-client.ts   # React Query configuration
+├── types/                # TypeScript type definitions
+├── .env.example
+└── next.config.ts
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL | `http://localhost:4000` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server with hot reload |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
