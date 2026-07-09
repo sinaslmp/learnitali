@@ -11,6 +11,8 @@ export const lessonsEspresso1: Lesson[] = [
     bookSlug: BOOK_SLUG,
     slug: 'lesson-1',
     pdfUrl: '/books/nuovo-espresso-1.pdf',
+    startPage: 5,
+    endPage: 16,
     title: 'Ciao! Come ti chiami?',
     titleFa: 'سلام! اسمت چیه؟',
     subtitle: 'Greetings & Introductions',
@@ -244,6 +246,8 @@ Cameriere: Prego!`,
     bookSlug: BOOK_SLUG,
     slug: 'lesson-2',
     pdfUrl: '/books/nuovo-espresso-1.pdf',
+    startPage: 17,
+    endPage: 32,
     title: 'Di dove sei?',
     titleFa: 'اهل کجایی؟',
     subtitle: 'Nationalities & Countries',
@@ -357,7 +361,7 @@ Studente: Grazie, studio molto!`,
 
   // ─── Lesson 3 ─────────────────────────────────────────────────────────────
   {
-    id: 3, number: 3, bookSlug: BOOK_SLUG, slug: 'lesson-3', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 3, number: 3, bookSlug: BOOK_SLUG, slug: 'lesson-3', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 33, endPage: 46,
     title: 'La famiglia',
     titleFa: 'خانواده',
     subtitle: 'Family & Relationships',
@@ -453,7 +457,7 @@ Studente: No, non ancora. Ma ho una ragazza!`,
 
   // ─── Lesson 4 ─────────────────────────────────────────────────────────────
   {
-    id: 4, number: 4, bookSlug: BOOK_SLUG, slug: 'lesson-4', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 4, number: 4, bookSlug: BOOK_SLUG, slug: 'lesson-4', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 47, endPage: 58,
     title: 'Al bar',
     titleFa: 'در کافه',
     subtitle: 'Ordering at a Café',
@@ -583,7 +587,7 @@ Barista: Un euro di resto. Grazie e buona serata!`,
 
   // ─── Lesson 5 ─────────────────────────────────────────────────────────────
   {
-    id: 5, number: 5, bookSlug: BOOK_SLUG, slug: 'lesson-5', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 5, number: 5, bookSlug: BOOK_SLUG, slug: 'lesson-5', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 59, endPage: 74,
     title: 'Che ore sono?',
     titleFa: 'ساعت چنده؟',
     subtitle: 'Time & Daily Routine',
@@ -678,7 +682,7 @@ B: موفق باشی!`,
 
   // ─── Lessons 6-10 (compact but complete) ─────────────────────────────────
   {
-    id: 6, number: 6, bookSlug: BOOK_SLUG, slug: 'lesson-6', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 6, number: 6, bookSlug: BOOK_SLUG, slug: 'lesson-6', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 75, endPage: 88,
     title: 'Dove abiti?',
     titleFa: 'کجا زندگی می‌کنی؟',
     subtitle: 'Home & City',
@@ -764,7 +768,7 @@ Passante: Prego, buona giornata!`,
   },
 
   {
-    id: 7, number: 7, bookSlug: BOOK_SLUG, slug: 'lesson-7', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 7, number: 7, bookSlug: BOOK_SLUG, slug: 'lesson-7', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 89, endPage: 105,
     title: 'Cosa fai nel tempo libero?',
     titleFa: 'وقت آزادت چی‌کار می‌کنی؟',
     subtitle: 'Hobbies & Free Time',
@@ -850,7 +854,7 @@ B: چه خوب! منم می‌خوام امتحان کنم!`,
   },
 
   {
-    id: 8, number: 8, bookSlug: BOOK_SLUG, slug: 'lesson-8', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 8, number: 8, bookSlug: BOOK_SLUG, slug: 'lesson-8', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 106, endPage: 116,
     title: 'Andiamo a fare la spesa!',
     titleFa: 'بریم خرید!',
     subtitle: 'Shopping & Food',
@@ -941,7 +945,7 @@ Fruttivendolo: Cinquanta centesimi di resto. Grazie e buona giornata!`,
   },
 
   {
-    id: 9, number: 9, bookSlug: BOOK_SLUG, slug: 'lesson-9', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 9, number: 9, bookSlug: BOOK_SLUG, slug: 'lesson-9', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 117, endPage: 128,
     title: 'Com\'è il tempo?',
     titleFa: 'هوا چطوره؟',
     subtitle: 'Weather & Seasons',
@@ -1021,7 +1025,7 @@ Fruttivendolo: Cinquanta centesimi di resto. Grazie e buona giornata!`,
   },
 
   {
-    id: 10, number: 10, bookSlug: BOOK_SLUG, slug: 'lesson-10', pdfUrl: '/books/nuovo-espresso-1.pdf',
+    id: 10, number: 10, bookSlug: BOOK_SLUG, slug: 'lesson-10', pdfUrl: '/books/nuovo-espresso-1.pdf', startPage: 129, endPage: 141,
     title: 'Passato prossimo',
     titleFa: 'گذشته نزدیک',
     subtitle: 'Talking about the Past',

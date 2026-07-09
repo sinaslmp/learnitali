@@ -5,7 +5,7 @@ const PDF_URL = '/books/nuovo-espresso-4.pdf';
 
 export const lessonsEspresso4: Lesson[] = [
   {
-    id: 31, number: 1, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-1', pdfUrl: PDF_URL,
+    id: 31, number: 1, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-1', pdfUrl: PDF_URL, startPage: 6, endPage: 16,
     title: 'Il congiuntivo imperfetto', titleFa: 'التزامی ناقص',
     subtitle: 'Past Subjunctive for Hypotheticals and Reported Speech', subtitleFa: 'التزامی گذشته برای فرضیات و نقل قول',
     overview: 'Impara il congiuntivo imperfetto e trapassato per completare i periodi ipotetici.', overviewFa: 'التزامی ناقص و بعید را برای جملات شرطی یاد بگیر.',
@@ -88,7 +88,7 @@ B: قبل از اینکه خیلی دیر بشه، الان باید یاد بگ
   },
 
   {
-    id: 32, number: 2, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-2', pdfUrl: PDF_URL,
+    id: 32, number: 2, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-2', pdfUrl: PDF_URL, startPage: 17, endPage: 27,
     title: 'Il discorso indiretto', titleFa: 'نقل قول غیرمستقیم',
     subtitle: 'Reported Speech: Tense Shifts and Pronouns', subtitleFa: 'نقل قول: تغییر زمان و ضمایر',
     overview: 'Impara a riportare le parole degli altri con i cambiamenti di tempo necessari.', overviewFa: 'یاد بگیر حرف‌های دیگران را با تغییرات زمانی لازم نقل کنی.',
@@ -176,7 +176,7 @@ B: نه، فقط گفت فایل را تا جمعه بفرستیم.`,
   },
 
   {
-    id: 33, number: 3, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-3', pdfUrl: PDF_URL,
+    id: 33, number: 3, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-3', pdfUrl: PDF_URL, startPage: 29, endPage: 40,
     title: 'Il gerundio', titleFa: 'صفت مفعولی (گروندیو)',
     subtitle: 'Gerund for Simultaneous and Cause-Effect Actions', subtitleFa: 'گروندیو برای اعمال همزمان و علت و معلولی',
     overview: 'Impara a usare il gerundio presente e passato per arricchire il tuo italiano.', overviewFa: 'استفاده از گروندیوی حال و گذشته را برای غنی‌سازی ایتالیاییت یاد بگیر.',
@@ -259,7 +259,7 @@ B: بله، حق داری. بعد از گفتن این، می‌ایستم و غ
   },
 
   {
-    id: 34, number: 4, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-4', pdfUrl: PDF_URL,
+    id: 34, number: 4, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-4', pdfUrl: PDF_URL, startPage: 41, endPage: 52,
     title: 'Il futuro anteriore', titleFa: 'آینده قبلی',
     subtitle: 'Future Perfect and Future for Conjecture', subtitleFa: 'آینده کامل و آینده برای حدس',
     overview: 'Impara il futuro anteriore e l\'uso del futuro per fare supposizioni.', overviewFa: 'آینده قبلی و استفاده از آینده برای حدس‌زدن را یاد بگیر.',
@@ -343,7 +343,7 @@ A: بیا، احتمالاً ترافیک بوده. رُم آشفته‌ست.`,
   },
 
   {
-    id: 35, number: 5, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-5', pdfUrl: PDF_URL,
+    id: 35, number: 5, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-5', pdfUrl: PDF_URL, startPage: 53, endPage: 63,
     title: 'Fare e lasciare causativi', titleFa: 'ساختارهای سببی با fare و lasciare',
     subtitle: 'Causative Constructions and Perception Verbs', subtitleFa: 'ساختارهای سببی و افعال ادراکی',
     overview: 'Impara a usare "fare + infinito" e "lasciare + infinito" e i verbi di percezione.', overviewFa: 'استفاده از fare + مصدر و lasciare + مصدر و افعال ادراکی را یاد بگیر.',
@@ -428,7 +428,7 @@ A: بذار فردا من باهاش حرف بزنم.`,
   },
 
   {
-    id: 36, number: 6, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-6', pdfUrl: PDF_URL,
+    id: 36, number: 6, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-6', pdfUrl: PDF_URL, startPage: 65, endPage: 76,
     title: 'Il lessico del lavoro', titleFa: 'واژگان کار و شغل',
     subtitle: 'Professional Italian: Jobs, CVs and the Workplace', subtitleFa: 'ایتالیایی حرفه‌ای: شغل، رزومه و محیط کار',
     overview: 'Acquisisci il vocabolario necessario per parlare di lavoro, carriera e colloqui.', overviewFa: 'واژگان لازم برای صحبت درباره کار، شغل و مصاحبه را یاد بگیر.',
@@ -521,7 +521,7 @@ Intervistatrice: Ottimo. Le faremo sapere entro la settimana prossima.`,
   },
 
   {
-    id: 37, number: 7, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-7', pdfUrl: PDF_URL,
+    id: 37, number: 7, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-7', pdfUrl: PDF_URL, startPage: 77, endPage: 87,
     title: 'I media e la tecnologia', titleFa: 'رسانه و تکنولوژی',
     subtitle: 'Talking About Media, Technology and the Digital World', subtitleFa: 'صحبت درباره رسانه، تکنولوژی و دنیای دیجیتال',
     overview: 'Impara il vocabolario dei media digitali e come esprimere opinioni su tecnologia e società.', overviewFa: 'واژگان رسانه‌های دیجیتال و نحوه بیان نظر درباره تکنولوژی و جامعه را یاد بگیر.',
@@ -606,7 +606,7 @@ A: بله — دیگه نمی‌دونی چی واقعیه و چی نه.`,
   },
 
   {
-    id: 38, number: 8, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-8', pdfUrl: PDF_URL,
+    id: 38, number: 8, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-8', pdfUrl: PDF_URL, startPage: 89, endPage: 98,
     title: 'L\'ambiente e la sostenibilità', titleFa: 'محیط زیست و پایداری',
     subtitle: 'Environmental Issues and Sustainable Living in Italian', subtitleFa: 'مسائل محیط زیستی و زندگی پایدار به ایتالیایی',
     overview: 'Acquisisci il vocabolario ambientale e impara a discutere temi di sostenibilità.', overviewFa: 'واژگان محیط زیست را یاد بگیر و یاد بگیر درباره موضوعات پایداری بحث کنی.',
@@ -690,7 +690,7 @@ A: امیدواریم دولت‌ها بالاخره عمل کنند!`,
   },
 
   {
-    id: 39, number: 9, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-9', pdfUrl: PDF_URL,
+    id: 39, number: 9, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-9', pdfUrl: PDF_URL, startPage: 99, endPage: 108,
     title: 'Arte, cinema e letteratura', titleFa: 'هنر، سینما و ادبیات',
     subtitle: 'Discussing Arts and Culture in Italian', subtitleFa: 'بحث درباره هنر و فرهنگ به ایتالیایی',
     overview: 'Impara a parlare di arte, cinema e letteratura italiana con fluidità.', overviewFa: 'یاد بگیر با روانی درباره هنر، سینما و ادبیات ایتالیایی صحبت کنی.',
@@ -777,7 +777,7 @@ B: یه فیلم خیلی قشنگ درباره رنسانس در حال نما�
   },
 
   {
-    id: 40, number: 10, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-10', pdfUrl: PDF_URL,
+    id: 40, number: 10, bookSlug: BOOK_SLUG, slug: 'ne4-lesson-10', pdfUrl: PDF_URL, startPage: 109, endPage: 119,
     title: 'Revisione e conversazione avanzata', titleFa: 'مرور و مکالمه پیشرفته',
     subtitle: 'B2 Conversation: Fluency, Nuance and Style', subtitleFa: 'مکالمه B2: روانی، ظرافت و سبک',
     overview: 'Rivedi tutti i punti chiave del libro e pratica conversazioni avanzate su temi complessi.', overviewFa: 'همه نکات کلیدی کتاب را مرور کن و مکالمات پیشرفته درباره موضوعات پیچیده تمرین کن.',

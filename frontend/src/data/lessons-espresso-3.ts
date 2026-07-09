@@ -5,7 +5,7 @@ const PDF_URL = '/books/nuovo-espresso-3.pdf';
 
 export const lessonsEspresso3: Lesson[] = [
   {
-    id: 21, number: 1, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-1', pdfUrl: PDF_URL,
+    id: 21, number: 1, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-1', pdfUrl: PDF_URL, startPage: 4, endPage: 17,
     title: 'Il congiuntivo presente', titleFa: 'حالت التزامی حال',
     subtitle: 'Expressing Doubt, Opinion and Emotion', subtitleFa: 'بیان تردید، نظر و احساس',
     overview: 'Impara a usare il congiuntivo per esprimere opinioni, dubbi ed emozioni.', overviewFa: 'یاد بگیر از حالت التزامی برای بیان نظر، تردید و احساسات استفاده کنی.',
@@ -86,7 +86,7 @@ Studente B: Sebbene ci siano problemi, penso che i professori italiani siano bra
   },
 
   {
-    id: 22, number: 2, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-2', pdfUrl: PDF_URL,
+    id: 22, number: 2, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-2', pdfUrl: PDF_URL, startPage: 18, endPage: 30,
     title: 'Il condizionale', titleFa: 'حالت شرطی',
     subtitle: 'Wishes, Polite Requests and Hypotheticals', subtitleFa: 'آرزوها، درخواست‌های مؤدبانه و فرضیات',
     overview: 'Impara a usare il condizionale per fare richieste educate ed esprimere desideri.', overviewFa: 'یاد بگیر از شرطی برای درخواست‌های مؤدبانه و بیان آرزوها استفاده کنی.',
@@ -167,7 +167,7 @@ B: لطف می‌کردید، خیلی ممنون!`,
   },
 
   {
-    id: 23, number: 3, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-3', pdfUrl: PDF_URL,
+    id: 23, number: 3, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-3', pdfUrl: PDF_URL, startPage: 32, endPage: 47,
     title: 'I pronomi relativi', titleFa: 'ضمایر موصولی',
     subtitle: 'Relative Pronouns and Complex Sentences', subtitleFa: 'ضمایر موصولی و جملات پیچیده',
     overview: 'Impara a usare che, cui, il quale per collegare frasi.', overviewFa: 'یاد بگیر از che, cui, il quale برای اتصال جملات استفاده کنی.',
@@ -248,7 +248,7 @@ B: بله، مهم‌ترین مسابقه مؤسسه‌ماست، همونی ک
   },
 
   {
-    id: 24, number: 4, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-4', pdfUrl: PDF_URL,
+    id: 24, number: 4, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-4', pdfUrl: PDF_URL, startPage: 48, endPage: 61,
     title: 'Il passivo', titleFa: 'مجهول',
     subtitle: 'Passive Voice in Italian', subtitleFa: 'صدای مجهول در ایتالیایی',
     overview: 'Impara a costruire e usare la forma passiva in italiano.', overviewFa: 'یاد بگیر ساختار مجهول را در ایتالیایی بسازی و استفاده کنی.',
@@ -319,7 +319,7 @@ B: بله، مهم‌ترین مسابقه مؤسسه‌ماست، همونی ک
   },
 
   {
-    id: 25, number: 5, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-5', pdfUrl: PDF_URL,
+    id: 25, number: 5, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-5', pdfUrl: PDF_URL, startPage: 62, endPage: 74,
     title: 'I verbi modali avanzati', titleFa: 'افعال مُدال پیشرفته',
     subtitle: 'Advanced Modal Verbs', subtitleFa: 'افعال مُدال پیشرفته',
     overview: 'Approfondisci l\'uso dei verbi modali in tutti i tempi.', overviewFa: 'استفاده از افعال مُدال در تمام زمان‌ها را عمیق‌تر یاد بگیر.',
@@ -402,7 +402,7 @@ A: بیا، می‌تونی شهریور دوباره بدی!`,
   },
 
   {
-    id: 26, number: 6, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-6', pdfUrl: PDF_URL,
+    id: 26, number: 6, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-6', pdfUrl: PDF_URL, startPage: 76, endPage: 87,
     title: 'Il periodo ipotetico', titleFa: 'جملات شرطی',
     subtitle: 'Conditional Sentences (All Types)', subtitleFa: 'جملات شرطی (همه انواع)',
     overview: 'Impara tutti e tre i tipi di periodo ipotetico in italiano.', overviewFa: 'هر سه نوع جمله شرطی ایتالیایی را یاد بگیر.',
@@ -491,7 +491,7 @@ A: اگه دریا را انتخاب کرده بودم، در سیسیل می‌
   },
 
   {
-    id: 27, number: 7, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-7', pdfUrl: PDF_URL,
+    id: 27, number: 7, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-7', pdfUrl: PDF_URL, startPage: 88, endPage: 98,
     title: 'Cultura e tradizioni italiane', titleFa: 'فرهنگ و سنت‌های ایتالیایی',
     subtitle: 'Italian Culture, Customs and Identity', subtitleFa: 'فرهنگ، آداب و هویت ایتالیایی',
     overview: 'Scopri le tradizioni, i valori e le usanze della cultura italiana.', overviewFa: 'سنت‌ها، ارزش‌ها و آداب فرهنگ ایتالیایی را کشف کن.',
@@ -572,7 +572,7 @@ B: وجود دارند، ولی واقعیت پیچیده‌تره. ایتالی
   },
 
   {
-    id: 28, number: 8, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-8', pdfUrl: PDF_URL,
+    id: 28, number: 8, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-8', pdfUrl: PDF_URL, startPage: 100, endPage: 111,
     title: 'I media e la comunicazione', titleFa: 'رسانه و ارتباطات',
     subtitle: 'Media, News and Digital Communication', subtitleFa: 'رسانه، خبر و ارتباطات دیجیتال',
     overview: 'Impara a parlare di media, notizie e comunicazione digitale.', overviewFa: 'یاد بگیر درباره رسانه، خبر و ارتباطات دیجیتال صحبت کنی.',
@@ -643,7 +643,7 @@ B: وجود دارند، ولی واقعیت پیچیده‌تره. ایتالی
   },
 
   {
-    id: 29, number: 9, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-9', pdfUrl: PDF_URL,
+    id: 29, number: 9, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-9', pdfUrl: PDF_URL, startPage: 112, endPage: 127,
     title: 'L\'ambiente', titleFa: 'محیط زیست',
     subtitle: 'Environment, Ecology and Sustainability', subtitleFa: 'محیط زیست، بوم‌شناسی و پایداری',
     overview: 'Impara a discutere di temi ambientali e sostenibilità.', overviewFa: 'یاد بگیر درباره مسائل محیط زیستی و پایداری بحث کنی.',
@@ -726,7 +726,7 @@ A: موافقم، اگرچه همیشه آسون نیست.`,
   },
 
   {
-    id: 30, number: 10, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-10', pdfUrl: PDF_URL,
+    id: 30, number: 10, bookSlug: BOOK_SLUG, slug: 'ne3-lesson-10', pdfUrl: PDF_URL, startPage: 128, endPage: 140,
     title: 'Lavoro e carriera', titleFa: 'کار و شغل',
     subtitle: 'Career, Job Market and Professional Life', subtitleFa: 'شغل، بازار کار و زندگی حرفه‌ای',
     overview: 'Discuti di carriera, colloqui di lavoro e vita professionale a livello avanzato.', overviewFa: 'درباره شغل، مصاحبه کاری و زندگی حرفه‌ای در سطح پیشرفته بحث کن.',

@@ -157,6 +157,8 @@ export interface Lesson {
   color: string;           // Tailwind color class
   icon: string;
   pdfUrl?: string;
+  startPage: number;       // first page of this lezione in the book PDF
+  endPage: number;         // last page of this lezione in the book PDF
   vocabulary: VocabularyItem[];
   grammar: GrammarTopic[];
   reading: ReadingText[];
@@ -165,6 +167,17 @@ export interface Lesson {
   exercises: Exercise[];
   flashcards: Flashcard[];
   estimatedMinutes: number;
+}
+
+// ─── Page-by-page content ────────────────────────────────────────────────────
+
+export interface BookPageContent {
+  bookSlug: string;
+  page: number;             // matches Lesson.startPage..endPage (book PDF page index)
+  titleFa?: string;
+  explanationFa: string;    // full Persian breakdown of this page
+  explanation?: string;     // optional Italian summary/notes
+  keyPoints?: string[];
 }
 
 // ─── Progress ────────────────────────────────────────────────────────────────

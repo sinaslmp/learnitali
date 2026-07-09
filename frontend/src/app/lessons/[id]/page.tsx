@@ -499,6 +499,23 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           )}
         </div>
 
+        {/* Page-by-page study mode */}
+        {lesson.pdfUrl && (
+          <a
+            href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
+            className="flex items-center gap-3 rounded-2xl p-5 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 hover:border-indigo-500/40 transition-colors group"
+          >
+            <span className="text-3xl">📖</span>
+            <div className="text-right flex-1">
+              <p className="font-semibold">مطالعه صفحه به صفحه</p>
+              <p className="text-xs text-muted-foreground">
+                صفحه {lesson.startPage} تا {lesson.endPage} کتاب — با تصویر و توضیح کامل
+              </p>
+            </div>
+            <ChevronLeft size={18} className="text-indigo-500 group-hover:translate-x-[-2px] transition-transform" />
+          </a>
+        )}
+
         {/* PDF + navigation */}
         <div className="flex flex-col sm:flex-row gap-4">
           {/* PDF download */}

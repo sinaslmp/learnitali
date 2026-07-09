@@ -6,7 +6,7 @@ const PDF_URL = '/books/nuovo-espresso-2.pdf';
 export const lessonsEspresso2: Lesson[] = [
   // ─── Lesson 11 ────────────────────────────────────────────────
   {
-    id: 11, number: 1, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-1', pdfUrl: PDF_URL,
+    id: 11, number: 1, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-1', pdfUrl: PDF_URL, startPage: 7, endPage: 22,
     title: 'Imperfetto e passato prossimo',
     titleFa: 'گذشته استمراری و گذشته نزدیک',
     subtitle: 'Talking about Past Events',
@@ -92,7 +92,7 @@ B: سه سال پیش شروع کردم، ولی بچه که بودم فرانس
 
   // ─── Lesson 12 ────────────────────────────────────────────────
   {
-    id: 12, number: 2, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-2', pdfUrl: PDF_URL,
+    id: 12, number: 2, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-2', pdfUrl: PDF_URL, startPage: 23, endPage: 35,
     title: 'La casa ideale',
     titleFa: 'خانه ایده‌آل',
     subtitle: 'Describing Rooms & Furniture',
@@ -181,7 +181,7 @@ Cliente: Posso vederlo domani?`,
 
   // ─── Lesson 13 ────────────────────────────────────────────────
   {
-    id: 13, number: 3, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-3', pdfUrl: PDF_URL,
+    id: 13, number: 3, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-3', pdfUrl: PDF_URL, startPage: 39, endPage: 54,
     title: 'Il lavoro', titleFa: 'کار و شغل',
     subtitle: 'Jobs and Professions', subtitleFa: 'شغل‌ها و حرفه‌ها',
     overview: 'Impara a parlare di professioni, luoghi di lavoro e orari.', overviewFa: 'یاد بگیر درباره مشاغل، محل کار و ساعات کار صحبت کنی.',
@@ -267,7 +267,7 @@ Datore: عالی! کِی می‌تونید شروع کنید؟
 
   // ─── Lesson 14 ────────────────────────────────────────────────
   {
-    id: 14, number: 4, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-4', pdfUrl: PDF_URL,
+    id: 14, number: 4, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-4', pdfUrl: PDF_URL, startPage: 55, endPage: 68,
     title: 'La salute', titleFa: 'سلامتی',
     subtitle: 'Health, Body and Doctor Visits', subtitleFa: 'سلامت، بدن و ویزیت پزشک',
     overview: 'Impara a descrivere sintomi e andare dal medico.', overviewFa: 'یاد بگیر علائم را توصیف کنی و پیش دکتر بری.',
@@ -365,7 +365,7 @@ Segretaria: Benissimo, la aspettiamo domani.`,
 
   // ─── Lesson 15 ────────────────────────────────────────────────
   {
-    id: 15, number: 5, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-5', pdfUrl: PDF_URL,
+    id: 15, number: 5, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-5', pdfUrl: PDF_URL, startPage: 69, endPage: 81,
     title: 'In giro per la città', titleFa: 'در شهر',
     subtitle: 'Getting Around Town', subtitleFa: 'جابجایی در شهر',
     overview: 'Impara a usare i mezzi pubblici e orientarti in città.', overviewFa: 'یاد بگیر از وسایل حمل‌ونقل عمومی استفاده کنی و توی شهر پیدا بشی.',
@@ -451,7 +451,7 @@ Passante: Prego, buona giornata!`,
 
   // ─── Lesson 16 ────────────────────────────────────────────────
   {
-    id: 16, number: 6, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-6', pdfUrl: PDF_URL,
+    id: 16, number: 6, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-6', pdfUrl: PDF_URL, startPage: 85, endPage: 98,
     title: 'Al ristorante', titleFa: 'در رستوران',
     subtitle: 'Ordering a Full Meal', subtitleFa: 'سفارش یک وعده کامل',
     overview: 'Impara a ordinare un pasto completo al ristorante italiano.', overviewFa: 'یاد بگیر توی رستوران ایتالیایی یه وعده کامل سفارش بدی.',
@@ -553,7 +553,7 @@ Ristorante: Benissimo, l'aspettiamo sabato.`,
 
   // ─── Lesson 17 ────────────────────────────────────────────────
   {
-    id: 17, number: 7, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-7', pdfUrl: PDF_URL,
+    id: 17, number: 7, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-7', pdfUrl: PDF_URL, startPage: 99, endPage: 111,
     title: 'Le vacanze', titleFa: 'تعطیلات',
     subtitle: 'Planning and Talking about Holidays', subtitleFa: 'برنامه‌ریزی و صحبت درباره تعطیلات',
     overview: 'Impara a parlare delle vacanze, pianificare un viaggio e raccontare esperienze.', overviewFa: 'یاد بگیر درباره تعطیلات صحبت کنی، سفر برنامه‌ریزی کنی و تجربیات را تعریف کنی.',
@@ -637,7 +637,7 @@ A: حتماً خوش می‌گذره!`,
 
   // ─── Lesson 18 ────────────────────────────────────────────────
   {
-    id: 18, number: 8, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-8', pdfUrl: PDF_URL,
+    id: 18, number: 8, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-8', pdfUrl: PDF_URL, startPage: 115, endPage: 130,
     title: 'Lo shopping', titleFa: 'خرید لباس',
     subtitle: 'Clothes, Sizes and Shopping', subtitleFa: 'لباس، سایز و خرید',
     overview: 'Impara a fare shopping, parlare di abbigliamento e fare confronti.', overviewFa: 'یاد بگیر لباس بخری، درباره پوشاک صحبت کنی و مقایسه کنی.',
@@ -747,7 +747,7 @@ B: منم فردا می‌رم!`,
 
   // ─── Lesson 19 ────────────────────────────────────────────────
   {
-    id: 19, number: 9, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-9', pdfUrl: PDF_URL,
+    id: 19, number: 9, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-9', pdfUrl: PDF_URL, startPage: 131, endPage: 144,
     title: 'In treno e in aereo', titleFa: 'با قطار و هواپیما',
     subtitle: 'Travel by Train and Plane', subtitleFa: 'سفر با قطار و هواپیما',
     overview: 'Impara a prenotare biglietti e viaggiare in treno o aereo.', overviewFa: 'یاد بگیر بلیت رزرو کنی و با قطار یا هواپیما سفر کنی.',
@@ -835,7 +835,7 @@ Cliente: Perfetto. Pago con carta.`,
 
   // ─── Lesson 20 ────────────────────────────────────────────────
   {
-    id: 20, number: 10, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-10', pdfUrl: PDF_URL,
+    id: 20, number: 10, bookSlug: BOOK_SLUG, slug: 'ne2-lesson-10', pdfUrl: PDF_URL, startPage: 145, endPage: 157,
     title: 'Parliamo del futuro', titleFa: 'درباره آینده صحبت کنیم',
     subtitle: 'Future Plans and Dreams', subtitleFa: 'برنامه‌ها و رویاهای آینده',
     overview: 'Impara a parlare di progetti futuri, sogni e ambizioni.', overviewFa: 'یاد بگیر درباره برنامه‌های آینده، رویاها و جاه‌طلبی‌ها صحبت کنی.',
