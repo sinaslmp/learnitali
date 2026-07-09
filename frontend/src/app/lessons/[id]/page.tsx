@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
+import { Fragment, use, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { VocabCard } from '@/components/vocabulary/VocabCard';
@@ -83,11 +83,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Section tabs */}
-        <div className="flex items-center gap-2">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {SECTIONS.map(({ id: sid, label, icon: Icon }) => (
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
+            <Fragment key={sid}>
               <button
-                key={sid}
                 onClick={() => setActiveSection(sid)}
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
@@ -100,17 +99,17 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 <Icon size={14} />
                 {label}
               </button>
-            ))}
-          </div>
-          {lesson.pdfUrl && (
-            <a
-              href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
-            >
-              <BookText size={14} />
-              صفحه به صفحه
-            </a>
-          )}
+              {i === 0 && lesson.pdfUrl && (
+                <a
+                  href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
+                >
+                  <BookText size={14} />
+                  صفحه به صفحه
+                </a>
+              )}
+            </Fragment>
+          ))}
         </div>
 
         {/* Section content */}

@@ -9,7 +9,7 @@ import { PdfPageImage } from '@/components/lessons/PdfPageImage';
 import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { getPageContent } from '@/data/pages';
 import { resolveBookAsset } from '@/lib/assets';
-import { ChevronRight, ChevronLeft, BookOpen } from 'lucide-react';
+import { ChevronRight, ChevronLeft, BookOpen, Sparkles, Lightbulb, Languages } from 'lucide-react';
 
 interface PageParams {
   id: string;
@@ -74,36 +74,59 @@ export default function LessonPageViewer({ params }: { params: Promise<PageParam
         <PdfPageImage pdfUrl={resolveBookAsset(lesson.pdfUrl)!} page={page} />
 
         {/* Explanation */}
-        <div className="bg-card border border-border rounded-2xl p-6 text-right space-y-4">
-          {content ? (
-            <>
-              {content.titleFa && <h2 className="text-lg font-bold">{content.titleFa}</h2>}
-              <p className="text-sm leading-8 whitespace-pre-line">{content.explanationFa}</p>
-              {content.explanation && (
+        {content ? (
+          <div className="space-y-4 text-right">
+            {/* Main explanation card */}
+            <div className="bg-card border border-border rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-l from-indigo-500/10 to-transparent border-b border-border">
+                <span className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                  <Sparkles size={16} />
+                </span>
+                <div>
+                  <p className="text-xs text-muted-foreground">توضیح این صفحه</p>
+                  {content.titleFa && <h2 className="font-bold leading-snug">{content.titleFa}</h2>}
+                </div>
+              </div>
+              <p className="px-5 py-5 text-sm leading-8 whitespace-pre-line border-r-2 border-indigo-500/30 mr-5 my-3">
+                {content.explanationFa}
+              </p>
+            </div>
+
+            {/* Italian summary */}
+            {content.explanation && (
+              <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-4 flex items-start gap-3">
+                <Languages size={16} className="text-blue-500 mt-0.5 shrink-0" />
                 <p className="text-sm text-muted-foreground italic leading-7" dir="ltr">
                   {content.explanation}
                 </p>
-              )}
-              {content.keyPoints && content.keyPoints.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">نکات کلیدی</h3>
-                  <ul className="space-y-1.5">
-                    {content.keyPoints.map((kp, i) => (
-                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="text-green-500 mt-0.5">•</span>
-                        {kp}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              توضیح این صفحه به‌زودی اضافه می‌شود.
-            </p>
-          )}
-        </div>
+              </div>
+            )}
+
+            {/* Key points */}
+            {content.keyPoints && content.keyPoints.length > 0 && (
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400 mb-3">
+                  <Lightbulb size={15} />
+                  نکات کلیدی
+                </h3>
+                <ul className="space-y-2">
+                  {content.keyPoints.map((kp, i) => (
+                    <li key={i} className="text-sm flex items-start gap-2.5">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
+                        {i + 1}
+                      </span>
+                      <span className="text-muted-foreground leading-6">{kp}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-card border border-dashed border-border rounded-2xl p-8 text-center">
+            <p className="text-sm text-muted-foreground">توضیح این صفحه به‌زودی اضافه می‌شود.</p>
+          </div>
+        )}
 
         {/* Prev / Next */}
         <div className="flex items-center justify-between gap-3">
