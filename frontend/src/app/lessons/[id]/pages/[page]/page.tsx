@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { PdfPageImage } from '@/components/lessons/PdfPageImage';
 import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { getPageContent } from '@/data/pages';
+import { resolveBookAsset } from '@/lib/assets';
 import { ChevronRight, ChevronLeft, BookOpen } from 'lucide-react';
 
 interface PageParams {
@@ -70,7 +71,7 @@ export default function LessonPageViewer({ params }: { params: Promise<PageParam
         </div>
 
         {/* Page image */}
-        <PdfPageImage pdfUrl={lesson.pdfUrl} page={page} />
+        <PdfPageImage pdfUrl={resolveBookAsset(lesson.pdfUrl)!} page={page} />
 
         {/* Explanation */}
         <div className="bg-card border border-border rounded-2xl p-6 text-right space-y-4">

@@ -13,10 +13,11 @@ import { useProgressStore } from '@/stores/progressStore';
 import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { LessonSection } from '@/types';
 import { cn } from '@/lib/utils';
+import { resolveBookAsset } from '@/lib/assets';
 import {
   BookOpen, Brain, Headphones, Mic, PenLine, Dumbbell,
   Trophy, FileText, ChevronRight, ChevronLeft, CheckCircle, Volume2, Star,
-  Clock, Target, Download
+  Clock, Target, Download, BookText
 } from 'lucide-react';
 
 const SECTIONS: { id: LessonSection; label: string; icon: React.ElementType }[] = [
@@ -82,23 +83,34 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Section tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {SECTIONS.map(({ id: sid, label, icon: Icon }) => (
-            <button
-              key={sid}
-              onClick={() => setActiveSection(sid)}
-              className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
-                activeSection === sid
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-green-500/30'
-              )}
+        <div className="flex items-center gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {SECTIONS.map(({ id: sid, label, icon: Icon }) => (
+              <button
+                key={sid}
+                onClick={() => setActiveSection(sid)}
+                className={cn(
+                  'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
+                  activeSection === sid
+                    ? 'bg-green-500 text-white shadow-md'
+                    : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-green-500/30'
+                )}
+              >
+                {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
+          </div>
+          {lesson.pdfUrl && (
+            <a
+              href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
             >
-              {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
-              <Icon size={14} />
-              {label}
-            </button>
-          ))}
+              <BookText size={14} />
+              صفحه به صفحه
+            </a>
+          )}
         </div>
 
         {/* Section content */}
@@ -521,7 +533,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           {/* PDF download */}
           {lesson.pdfUrl ? (
             <a
-              href={lesson.pdfUrl}
+              href={resolveBookAsset(lesson.pdfUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center gap-3 border border-border rounded-2xl p-5 hover:border-green-500/40 transition-colors group"
