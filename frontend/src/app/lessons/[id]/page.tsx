@@ -83,7 +83,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Section tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-2 bg-background/95 backdrop-blur-sm flex gap-2 overflow-x-auto scrollbar-none">
           {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
             <Fragment key={sid}>
               <button

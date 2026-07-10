@@ -175,9 +175,10 @@ export interface BookPageContent {
   bookSlug: string;
   page: number;             // matches Lesson.startPage..endPage (book PDF page index)
   titleFa?: string;
-  explanationFa: string;    // full Persian breakdown of this page
+  titleEmoji?: string;      // small icon/emoji shown next to the title
+  explanationFa: string[];  // Persian breakdown of this page, one entry per paragraph. Supports **bold**.
   explanation?: string;     // optional Italian summary/notes
-  keyPoints?: string[];
+  keyPoints?: string[];     // supports **bold**
 }
 
 // ─── Progress ────────────────────────────────────────────────────────────────

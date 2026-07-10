@@ -81,3 +81,6 @@ body {
 
 /* Transition defaults */
 * { transition-property: color, background-color, border-color; transition-duration: 150ms; }
+
+/* Clickable elements should always show a pointer cursor */
+button:not(:disabled), [role="button"]:not([aria-disabled="true"]) { cursor: pointer; }

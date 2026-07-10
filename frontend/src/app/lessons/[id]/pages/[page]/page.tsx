@@ -1,11 +1,12 @@
 'use client';
 
-import { use } from 'react';
+import { use, useEffect } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { PdfPageImage } from '@/components/lessons/PdfPageImage';
+import { RichText } from '@/components/lessons/RichText';
 import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { getPageContent } from '@/data/pages';
 import { resolveBookAsset } from '@/lib/assets';
@@ -27,6 +28,10 @@ export default function LessonPageViewer({ params }: { params: Promise<PageParam
 
   const { prev: prevLesson, next: nextLesson } = getAdjacentLessons(lesson.id);
   const content = getPageContent(lesson.bookSlug, page);
+
+  useEffect(() => {
+    document.querySelector('main')?.scrollTo({ top: 0, behavior: 'instant' });
+  }, [lesson.id, page]);
 
   const atFirstPage = page === lesson.startPage;
   const atLastPage = page === lesson.endPage;
@@ -79,17 +84,21 @@ export default function LessonPageViewer({ params }: { params: Promise<PageParam
             {/* Main explanation card */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden">
               <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-l from-indigo-500/10 to-transparent border-b border-border">
-                <span className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-                  <Sparkles size={16} />
+                <span className="w-9 h-9 rounded-xl bg-indigo-500/15 flex items-center justify-center shrink-0 text-lg">
+                  {content.titleEmoji ?? <Sparkles size={16} className="text-indigo-600 dark:text-indigo-400" />}
                 </span>
                 <div>
                   <p className="text-xs text-muted-foreground">توضیح این صفحه</p>
                   {content.titleFa && <h2 className="font-bold leading-snug">{content.titleFa}</h2>}
                 </div>
               </div>
-              <p className="px-5 py-5 text-sm leading-8 whitespace-pre-line border-r-2 border-indigo-500/30 mr-5 my-3">
-                {content.explanationFa}
-              </p>
+              <div className="px-5 py-5 space-y-4">
+                {content.explanationFa.map((para, i) => (
+                  <p key={i} className="text-sm leading-8 border-r-2 border-indigo-500/30 pr-4">
+                    <RichText text={para} />
+                  </p>
+                ))}
+              </div>
             </div>
 
             {/* Italian summary */}
@@ -115,7 +124,9 @@ export default function LessonPageViewer({ params }: { params: Promise<PageParam
                       <span className="w-5 h-5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[11px] font-bold shrink-0 mt-0.5">
                         {i + 1}
                       </span>
-                      <span className="text-muted-foreground leading-6">{kp}</span>
+                      <span className="text-muted-foreground leading-6">
+                        <RichText text={kp} />
+                      </span>
                     </li>
                   ))}
                 </ul>
