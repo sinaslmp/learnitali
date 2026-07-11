@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, use, useState } from 'react';
+import { Fragment, use, useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { VocabCard } from '@/components/vocabulary/VocabCard';
@@ -43,6 +43,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const { getLessonProgress, markSectionComplete, addNote } = useProgressStore();
   const lp = getLessonProgress(lesson.id);
   const [noteContent, setNoteContent] = useState('');
+  const tabsScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tabsScrollRef.current) tabsScrollRef.current.scrollLeft = 0;
+  }, []);
 
   const pct = Math.round((lp.completedSections.length / (SECTIONS.length - 1)) * 100);
 
@@ -83,33 +88,43 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Section tabs */}
-        <div className="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-2 bg-background/95 backdrop-blur-sm flex gap-2 overflow-x-auto scrollbar-none">
-          {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
-            <Fragment key={sid}>
-              <button
-                onClick={() => setActiveSection(sid)}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
-                  activeSection === sid
-                    ? 'bg-green-500 text-white shadow-md'
-                    : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-green-500/30'
-                )}
-              >
-                {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
-                <Icon size={14} />
-                {label}
-              </button>
-              {i === 0 && lesson.pdfUrl && (
-                <a
-                  href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
+        <div className="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-2 bg-background/95 backdrop-blur-sm">
+          <div
+            ref={tabsScrollRef}
+            onWheel={(e) => {
+              if (e.deltaY === 0) return;
+              e.currentTarget.scrollLeft += e.deltaY;
+              e.preventDefault();
+            }}
+            className="flex gap-2 overflow-x-auto scrollbar-none"
+          >
+            {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
+              <Fragment key={sid}>
+                <button
+                  onClick={() => setActiveSection(sid)}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
+                    activeSection === sid
+                      ? 'bg-green-500 text-white shadow-md'
+                      : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-green-500/30'
+                  )}
                 >
-                  <BookText size={14} />
-                  صفحه به صفحه
-                </a>
-              )}
-            </Fragment>
-          ))}
+                  {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
+                  <Icon size={14} />
+                  {label}
+                </button>
+                {i === 0 && lesson.pdfUrl && (
+                  <a
+                    href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
+                  >
+                    <BookText size={14} />
+                    صفحه به صفحه
+                  </a>
+                )}
+              </Fragment>
+            ))}
+          </div>
         </div>
 
         {/* Section content */}
@@ -285,7 +300,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     <audio
                       controls
                       className="w-full rounded-xl"
-                      src={track.audioUrl}
+                      src={resolveBookAsset(track.audioUrl)}
                     />
                   ) : (
                     <div className="bg-muted/50 rounded-xl p-4 text-center text-xs text-muted-foreground">
