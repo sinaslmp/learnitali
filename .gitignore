@@ -40,3 +40,6 @@ coverage/
 *.tsbuildinfo
 
 keys.txt
+
+# Playwright MCP scratch output
+.playwright-mcp/

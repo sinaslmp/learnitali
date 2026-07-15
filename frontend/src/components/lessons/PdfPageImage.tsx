@@ -55,7 +55,8 @@ export function PdfPageImage({ pdfUrl, page }: PdfPageImageProps) {
       .then((url) => {
         if (!cancelled) setDataUrl(url);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('Failed to render PDF page', { pdfUrl, page, err });
         if (!cancelled) setError(true);
       });
     return () => {
