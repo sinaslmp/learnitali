@@ -17,9 +17,14 @@ async function loadPdf(pdfUrl: string): Promise<PDFDocumentProxy> {
       // so the polyfill is needed here too, not just inside the worker below.
       applyPdfjsPolyfills();
       const pdfjsLib = await import('pdfjs-dist');
+      // The bundler resolves this to a root-relative path (e.g. "/_next/static/...")
+      // rather than a fully-qualified URL. That's fine for assigning to
+      // `workerSrc` directly (browsers resolve it against the document), but a
+      // dynamic `import()` from inside a Blob's own module scope can't resolve
+      // a root-relative specifier the same way, so re-anchor it to a real origin.
       const workerUrl = new URL(
-        'pdfjs-dist/build/pdf.worker.min.mjs',
-        import.meta.url
+        new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString(),
+        window.location.href
       ).toString();
 
       // The dedicated worker has its own isolated JS realm, so the polyfill
