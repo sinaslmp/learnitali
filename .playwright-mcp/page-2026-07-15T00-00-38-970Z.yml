@@ -1,0 +1,22 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: L
+    - heading "خوش اومدی!" [level=1] [ref=e6]
+    - paragraph [ref=e7]: برای ادامه وارد شو
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - text: ایمیل
+      - textbox "email@example.com" [ref=e14]
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - link "رمز را فراموش کردی؟" [ref=e17] [cursor=pointer]:
+          - /url: /forgot-password
+        - generic [ref=e18]: رمز عبور
+      - generic [ref=e19]:
+        - textbox "رمز عبور" [ref=e23]
+        - button [ref=e24] [cursor=pointer]
+    - button "ورود" [ref=e28] [cursor=pointer]
+  - paragraph [ref=e29]:
+    - text: حساب نداری؟
+    - link "ثبت‌نام کن" [ref=e30] [cursor=pointer]:
+      - /url: /register

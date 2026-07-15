@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '@/stores/authStore';
 
 // ─── Base client ─────────────────────────────────────────────────────────────
 
@@ -9,12 +10,13 @@ export const apiClient: AxiosInstance = axios.create({
 });
 
 // ─── Request interceptor: attach access token ─────────────────────────────────
+// Reads from the auth store (the single source of truth for tokens) rather
+// than a separate localStorage key, so a token refreshed below is picked up
+// immediately without drifting out of sync with the store.
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-  }
+  const token = useAuthStore.getState().accessToken;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -53,7 +55,7 @@ apiClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const refreshToken = localStorage.getItem('refresh_token');
+      const refreshToken = useAuthStore.getState().refreshToken;
       if (!refreshToken) throw new Error('No refresh token');
 
       const { data } = await axios.post(
@@ -62,18 +64,14 @@ apiClient.interceptors.response.use(
       );
 
       const { accessToken, refreshToken: newRefresh } = data.data;
-      localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', newRefresh);
-
-      apiClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+      useAuthStore.setState({ accessToken, refreshToken: newRefresh });
       drainQueue(accessToken);
 
       original.headers.Authorization = `Bearer ${accessToken}`;
       return apiClient(original);
     } catch (refreshError) {
       drainQueue(null, refreshError);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      useAuthStore.setState({ user: null, accessToken: null, refreshToken: null });
       window.location.href = '/login';
       return Promise.reject(refreshError);
     } finally {

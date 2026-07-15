@@ -33,8 +33,6 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true, error: null });
         try {
           const data = await authApi.login(payload);
-          localStorage.setItem('access_token', data.accessToken);
-          localStorage.setItem('refresh_token', data.refreshToken);
           set({
             user: data.user,
             accessToken: data.accessToken,
@@ -67,8 +65,6 @@ export const useAuthStore = create<AuthStore>()(
         try {
           if (refreshToken) await authApi.logout(refreshToken);
         } finally {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
           set({ user: null, accessToken: null, refreshToken: null, isLoading: false });
         }
       },
