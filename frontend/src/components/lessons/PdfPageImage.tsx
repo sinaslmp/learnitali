@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ZoomIn } from 'lucide-react';
 import { PageZoomDialog } from './PageZoomDialog';
+import { applyPdfjsPolyfills } from '@/lib/pdfjs-native-polyfills';
 
 type PDFDocumentProxy = import('pdfjs-dist').PDFDocumentProxy;
 
@@ -12,11 +13,24 @@ async function loadPdf(pdfUrl: string): Promise<PDFDocumentProxy> {
   let cached = documentCache.get(pdfUrl);
   if (!cached) {
     cached = (async () => {
+      // pdf.js can fall back to running "worker" code on the main thread,
+      // so the polyfill is needed here too, not just inside the worker below.
+      applyPdfjsPolyfills();
       const pdfjsLib = await import('pdfjs-dist');
-      pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      const workerUrl = new URL(
         'pdfjs-dist/build/pdf.worker.min.mjs',
         import.meta.url
       ).toString();
+
+      // The dedicated worker has its own isolated JS realm, so the polyfill
+      // above doesn't reach it. Build a tiny wrapper module in a Blob that
+      // runs the polyfill first, then imports the real worker — a bundler
+      // can't compile a local worker entry point with an npm-package import
+      // inside it, so this composes the two at runtime instead.
+      const shimSource = `(${applyPdfjsPolyfills.toString()})();\nawait import(${JSON.stringify(workerUrl)});`;
+      const shimBlob = new Blob([shimSource], { type: 'text/javascript' });
+      pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(shimBlob);
+
       return pdfjsLib.getDocument(pdfUrl).promise;
     })();
     documentCache.set(pdfUrl, cached);
