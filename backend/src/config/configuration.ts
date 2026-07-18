@@ -57,4 +57,9 @@ export default () => ({
     secretKey: process.env.STRIPE_SECRET_KEY,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   },
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY,
+    chatModel: process.env.GEMINI_CHAT_MODEL ?? 'gemini-2.5-flash',
+    ttsModel: process.env.GEMINI_TTS_MODEL ?? 'gemini-2.5-flash-preview-tts',
+  },
 });

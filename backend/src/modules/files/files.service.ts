@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PrismaService } from '@/prisma/prisma.service';
-import { v4 as uuid } from 'uuid';
+import { randomUUID as uuid } from 'crypto';
 import * as path from 'path';
 
 const ALLOWED_AUDIO_TYPES = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/m4a'];

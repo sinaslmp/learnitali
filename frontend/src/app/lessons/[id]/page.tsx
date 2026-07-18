@@ -14,10 +14,11 @@ import { getLessonById, getAdjacentLessons } from '@/data/lessons';
 import { LessonSection } from '@/types';
 import { cn } from '@/lib/utils';
 import { resolveBookAsset } from '@/lib/assets';
+import { LessonChatPanel } from '@/components/chat/LessonChatPanel';
 import {
   BookOpen, Brain, Headphones, Mic, PenLine, Dumbbell,
   Trophy, FileText, ChevronRight, ChevronLeft, CheckCircle, Volume2, Star,
-  Clock, Target, Download, BookText, ArrowLeft, ArrowRight
+  Clock, Target, Download, BookText, ArrowLeft, ArrowRight, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 const SECTIONS: { id: LessonSection; label: string; icon: React.ElementType }[] = [
@@ -49,6 +50,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const pointerActiveRef = useRef(false);
   const [isDraggingTabs, setIsDraggingTabs] = useState(false);
   const [tabScrollState, setTabScrollState] = useState({ canScrollLeft: false, canScrollRight: false });
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const container = tabsScrollRef.current;
@@ -670,6 +672,34 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             <ChevronLeft size={18} className="text-indigo-500 group-hover:translate-x-[-2px] transition-transform" />
           </a>
         )}
+
+        {/* Chat with AI tutor about this lesson */}
+        <div className="rounded-2xl border border-green-500/20 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setChatOpen((v) => !v)}
+            aria-expanded={chatOpen}
+            className="w-full flex items-center gap-3 p-5 bg-gradient-to-br from-green-500/10 to-emerald-500/10 hover:from-green-500/15 hover:to-emerald-500/15 transition-colors"
+          >
+            <span className="text-3xl">🤖</span>
+            <div className="text-right flex-1">
+              <p className="font-semibold">چت با مارکو درباره‌ی این درس</p>
+              <p className="text-xs text-muted-foreground">
+                سوال بپرس، تمرین مکالمه کن — با نوشتن یا صدا
+              </p>
+            </div>
+            {chatOpen ? (
+              <ChevronUp size={18} className="text-green-500 shrink-0" />
+            ) : (
+              <ChevronDown size={18} className="text-green-500 shrink-0" />
+            )}
+          </button>
+          {chatOpen && (
+            <div className="p-4 border-t border-green-500/20">
+              <LessonChatPanel lesson={lesson} />
+            </div>
+          )}
+        </div>
 
         {/* PDF + navigation */}
         <div className="flex flex-col sm:flex-row gap-4">

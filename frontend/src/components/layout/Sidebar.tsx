@@ -7,12 +7,13 @@ import { useProgressStore } from '@/stores/progressStore';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import {
   BookOpen, LayoutDashboard, Globe, Brain, FileText,
-  Settings, Flame, Star, Trophy, X, TrendingUp
+  Settings, Flame, Star, Trophy, X, TrendingUp, MessageCircle
 } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard', label: 'داشبورد', labelIt: 'Dashboard', icon: LayoutDashboard },
   { href: '/lessons', label: 'درس‌ها', labelIt: 'Lezioni', icon: BookOpen },
+  { href: '/chat', label: 'گفتگو با هوش مصنوعی', labelIt: 'Chat AI', icon: MessageCircle },
   { href: '/vocabulary', label: 'لغات', labelIt: 'Vocabolario', icon: Globe },
   { href: '/grammar', label: 'گرامر', labelIt: 'Grammatica', icon: Brain },
   { href: '/flashcards', label: 'فلش‌کارت', labelIt: 'Flashcard', icon: Star },

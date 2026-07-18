@@ -20,6 +20,7 @@ import { QuizModule } from '@/modules/quiz/quiz.module';
 import { FlashcardsModule } from '@/modules/flashcards/flashcards.module';
 import { FilesModule } from '@/modules/files/files.module';
 import { NotesModule } from '@/modules/notes/notes.module';
+import { ChatModule } from '@/modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { NotesModule } from '@/modules/notes/notes.module';
     FlashcardsModule,
     FilesModule,
     NotesModule,
+    ChatModule,
   ],
   providers: [
     // Global rate limit guard

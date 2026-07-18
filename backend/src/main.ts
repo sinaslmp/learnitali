@@ -59,6 +59,7 @@ async function bootstrap() {
     .addTag('Quizzes', 'Quiz system')
     .addTag('Flashcards', 'SM-2 flashcard system')
     .addTag('Files', 'File storage (audio, PDF, images)')
+    .addTag('Chat', 'AI tutor chat — text and voice, general and per-lesson')
     .build();
 
   const document = SwaggerModule.createDocument(app, doc);

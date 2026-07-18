@@ -179,6 +179,7 @@ model User {
   flashcardReviews      FlashcardReview[]
   flashcardDecks        FlashcardDeck[]
   notes                 Note[]
+  chatConversations      ChatConversation[]
   bookmarks             Bookmark[]
   achievements          UserAchievement[]
   certificates          Certificate[]
@@ -1017,6 +1018,54 @@ model Note {
   @@map("notes")
   @@index([userId])
   @@index([userId, lessonId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// AI CHAT (general + per-lesson tutor, text and voice)
+// ─────────────────────────────────────────────────────────────
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+model ChatConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  // Frontend lesson id (loose reference, same convention as Note.lessonId —
+  // lesson content is static frontend data, not the backend Lesson table).
+  // Null means a general-purpose conversation, not tied to any lesson.
+  lessonId      String?
+  // Lesson title + a compact summary (objectives/vocab/grammar) sent once by
+  // the frontend when the conversation is created, since the backend has no
+  // other access to the static lesson content. Reused as system-prompt
+  // context for every message in this conversation.
+  lessonTitle   String?
+  lessonContext String?
+  title         String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages ChatMessage[]
+
+  @@map("chat_conversations")
+  @@index([userId])
+  @@index([userId, lessonId])
+}
+
+model ChatMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           ChatRole
+  content        String
+  isVoiceInput   Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+  @@index([conversationId])
 }
 
 model Bookmark {
