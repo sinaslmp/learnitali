@@ -17,7 +17,7 @@ import { resolveBookAsset } from '@/lib/assets';
 import {
   BookOpen, Brain, Headphones, Mic, PenLine, Dumbbell,
   Trophy, FileText, ChevronRight, ChevronLeft, CheckCircle, Volume2, Star,
-  Clock, Target, Download, BookText
+  Clock, Target, Download, BookText, ArrowLeft, ArrowRight
 } from 'lucide-react';
 
 const SECTIONS: { id: LessonSection; label: string; icon: React.ElementType }[] = [
@@ -44,10 +44,58 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const lp = getLessonProgress(lesson.id);
   const [noteContent, setNoteContent] = useState('');
   const tabsScrollRef = useRef<HTMLDivElement>(null);
+  const dragStartRef = useRef({ x: 0, scrollLeft: 0 });
+  const isDraggingRef = useRef(false);
+  const [isDraggingTabs, setIsDraggingTabs] = useState(false);
+  const [tabScrollState, setTabScrollState] = useState({ canScrollLeft: false, canScrollRight: false });
 
   useEffect(() => {
-    if (tabsScrollRef.current) tabsScrollRef.current.scrollLeft = 0;
+    const container = tabsScrollRef.current;
+    if (!container) return;
+
+    container.scrollLeft = 0;
+
+    const updateTabScrollState = () => {
+      const containerRect = container.getBoundingClientRect();
+      const tabItems = container.querySelectorAll<HTMLElement>('[data-tab-item]');
+      if (!tabItems.length) return;
+
+      const tabBounds = Array.from(tabItems, (item) => item.getBoundingClientRect());
+      const nextState = {
+        canScrollLeft: Math.min(...tabBounds.map((bounds) => bounds.left)) < containerRect.left - 1,
+        canScrollRight: Math.max(...tabBounds.map((bounds) => bounds.right)) > containerRect.right + 1,
+      };
+      setTabScrollState((currentState) => {
+        if (
+          currentState.canScrollLeft === nextState.canScrollLeft &&
+          currentState.canScrollRight === nextState.canScrollRight
+        ) {
+          return currentState;
+        }
+        return nextState;
+      });
+    };
+
+    updateTabScrollState();
+    container.addEventListener('scroll', updateTabScrollState, { passive: true });
+    const observer = new ResizeObserver(updateTabScrollState);
+    observer.observe(container);
+
+    return () => {
+      container.removeEventListener('scroll', updateTabScrollState);
+      observer.disconnect();
+    };
   }, []);
+
+  const scrollTabs = (amount: number) => {
+    tabsScrollRef.current?.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  const selectSection = (section: LessonSection, target: HTMLButtonElement) => {
+    if (isDraggingRef.current) return;
+    setActiveSection(section);
+    target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  };
 
   const pct = Math.round((lp.completedSections.length / (SECTIONS.length - 1)) * 100);
 
@@ -89,41 +137,106 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
         {/* Section tabs */}
         <div className="sticky top-0 z-10 -mx-4 lg:-mx-6 px-4 lg:px-6 py-2 bg-background/95 backdrop-blur-sm">
-          <div
-            ref={tabsScrollRef}
-            onWheel={(e) => {
-              if (e.deltaY === 0) return;
-              e.currentTarget.scrollLeft += e.deltaY;
-              e.preventDefault();
-            }}
-            className="flex gap-2 overflow-x-auto scrollbar-none"
-          >
-            {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
-              <Fragment key={sid}>
-                <button
-                  onClick={() => setActiveSection(sid)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all',
-                    activeSection === sid
-                      ? 'bg-green-500 text-white shadow-md'
-                      : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-green-500/30'
-                  )}
-                >
-                  {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
-                  <Icon size={14} />
-                  {label}
-                </button>
-                {i === 0 && lesson.pdfUrl && (
-                  <a
-                    href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:border-indigo-500/50 transition-colors"
+          <div className="relative">
+            <div
+              ref={tabsScrollRef}
+              role="navigation"
+              aria-label="بخش‌های درس"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                  e.preventDefault();
+                  scrollTabs(e.key === 'ArrowLeft' ? -250 : 250);
+                }
+              }}
+              onWheel={(e) => {
+                if (e.deltaY === 0) return;
+                e.preventDefault();
+                scrollTabs(e.deltaY);
+              }}
+              onPointerDown={(e) => {
+                if (e.pointerType === 'touch') return;
+                dragStartRef.current = { x: e.clientX, scrollLeft: e.currentTarget.scrollLeft };
+                isDraggingRef.current = false;
+                setIsDraggingTabs(true);
+                e.currentTarget.setPointerCapture(e.pointerId);
+              }}
+              onPointerMove={(e) => {
+                if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+                const distance = e.clientX - dragStartRef.current.x;
+                if (Math.abs(distance) > 3) isDraggingRef.current = true;
+                e.currentTarget.scrollLeft = dragStartRef.current.scrollLeft - distance;
+              }}
+              onPointerUp={(e) => {
+                if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+                e.currentTarget.releasePointerCapture(e.pointerId);
+                setIsDraggingTabs(false);
+                window.setTimeout(() => { isDraggingRef.current = false; }, 0);
+              }}
+              onPointerCancel={() => {
+                isDraggingRef.current = false;
+                setIsDraggingTabs(false);
+              }}
+              className={cn(
+                'flex gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none touch-pan-x outline-none focus-visible:ring-2 focus-visible:ring-green-500/70 focus-visible:ring-offset-2 rounded-xl',
+                isDraggingTabs ? 'cursor-grabbing select-none' : 'cursor-grab'
+              )}
+            >
+              {SECTIONS.map(({ id: sid, label, icon: Icon }, i) => (
+                <Fragment key={sid}>
+                  <button
+                    type="button"
+                    aria-pressed={activeSection === sid}
+                    aria-label={`بخش ${label}`}
+                    data-tab-item
+                    onClick={(e) => selectSection(sid, e.currentTarget)}
+                    className={cn(
+                      'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 snap-start transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 active:scale-[0.97]',
+                      activeSection === sid
+                        ? 'bg-green-500 text-white shadow-md shadow-green-500/25 hover:scale-[1.02] hover:shadow-lg hover:shadow-green-500/30'
+                        : 'bg-card border border-border text-muted-foreground shadow-sm hover:scale-[1.02] hover:text-foreground hover:border-green-500/30 hover:shadow-md'
+                    )}
                   >
-                    <BookText size={14} />
-                    صفحه به صفحه
-                  </a>
-                )}
-              </Fragment>
-            ))}
+                    {isCompleted(sid) && <CheckCircle size={13} className={activeSection === sid ? 'text-white' : 'text-green-500'} />}
+                    <Icon size={14} />
+                    {label}
+                  </button>
+                  {i === 0 && lesson.pdfUrl && (
+                    <a
+                      href={`/lessons/${lesson.id}/pages/${lesson.startPage}`}
+                      data-tab-item
+                      aria-label="مطالعه صفحه به صفحه"
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 snap-start bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 shadow-sm transition-all duration-200 ease-out hover:scale-[1.02] hover:border-indigo-500/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 active:scale-[0.97] dark:text-indigo-400"
+                    >
+                      <BookText size={14} />
+                      صفحه به صفحه
+                    </a>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+
+            <div className={cn('pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background/95 to-transparent transition-opacity duration-200', tabScrollState.canScrollLeft ? 'opacity-100' : 'opacity-0')} />
+            <div className={cn('pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background/95 to-transparent transition-opacity duration-200', tabScrollState.canScrollRight ? 'opacity-100' : 'opacity-0')} />
+
+            <button
+              type="button"
+              aria-label="پیمایش تب‌ها به چپ"
+              disabled={!tabScrollState.canScrollLeft}
+              onClick={() => scrollTabs(-250)}
+              className={cn('absolute left-2 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-lg border border-border/60 bg-background/75 p-2 text-foreground shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-background/95 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:pointer-events-none disabled:opacity-0 md:flex', tabScrollState.canScrollLeft ? 'opacity-100' : 'opacity-0')}
+            >
+              <ArrowLeft size={16} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="پیمایش تب‌ها به راست"
+              disabled={!tabScrollState.canScrollRight}
+              onClick={() => scrollTabs(250)}
+              className={cn('absolute right-2 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-lg border border-border/60 bg-background/75 p-2 text-foreground shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-background/95 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:pointer-events-none disabled:opacity-0 md:flex', tabScrollState.canScrollRight ? 'opacity-100' : 'opacity-0')}
+            >
+              <ArrowRight size={16} aria-hidden="true" />
+            </button>
           </div>
         </div>
 
