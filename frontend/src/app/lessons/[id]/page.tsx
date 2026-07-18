@@ -46,6 +46,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const tabsScrollRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef({ x: 0, scrollLeft: 0 });
   const isDraggingRef = useRef(false);
+  const pointerActiveRef = useRef(false);
   const [isDraggingTabs, setIsDraggingTabs] = useState(false);
   const [tabScrollState, setTabScrollState] = useState({ canScrollLeft: false, canScrollRight: false });
 
@@ -156,24 +157,39 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               }}
               onPointerDown={(e) => {
                 if (e.pointerType === 'touch') return;
-                dragStartRef.current = { x: e.clientX, scrollLeft: e.currentTarget.scrollLeft };
+                pointerActiveRef.current = true;
                 isDraggingRef.current = false;
-                setIsDraggingTabs(true);
-                e.currentTarget.setPointerCapture(e.pointerId);
+                dragStartRef.current = { x: e.clientX, scrollLeft: e.currentTarget.scrollLeft };
               }}
               onPointerMove={(e) => {
-                if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+                if (!pointerActiveRef.current) return;
                 const distance = e.clientX - dragStartRef.current.x;
-                if (Math.abs(distance) > 3) isDraggingRef.current = true;
+                if (!isDraggingRef.current) {
+                  // Capturing the pointer immediately on pointerdown (even for a
+                  // plain click) makes the browser retarget the resulting click
+                  // event to this container instead of the tab button underneath,
+                  // so tab buttons stop responding to clicks entirely. Only
+                  // capture once we've confirmed an actual drag is happening.
+                  if (Math.abs(distance) <= 3) return;
+                  isDraggingRef.current = true;
+                  setIsDraggingTabs(true);
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                }
                 e.currentTarget.scrollLeft = dragStartRef.current.scrollLeft - distance;
               }}
               onPointerUp={(e) => {
-                if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-                e.currentTarget.releasePointerCapture(e.pointerId);
+                pointerActiveRef.current = false;
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                  e.currentTarget.releasePointerCapture(e.pointerId);
+                }
                 setIsDraggingTabs(false);
                 window.setTimeout(() => { isDraggingRef.current = false; }, 0);
               }}
-              onPointerCancel={() => {
+              onPointerCancel={(e) => {
+                pointerActiveRef.current = false;
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                  e.currentTarget.releasePointerCapture(e.pointerId);
+                }
                 isDraggingRef.current = false;
                 setIsDraggingTabs(false);
               }}
