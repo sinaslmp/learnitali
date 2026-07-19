@@ -29,9 +29,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Prisma
-backend/prisma/migrations/
-
 # Test coverage
 coverage/
 .nyc_output/
