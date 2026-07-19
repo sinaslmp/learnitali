@@ -59,7 +59,9 @@ export default () => ({
   },
   gemini: {
     apiKey: process.env.GEMINI_API_KEY,
-    chatModel: process.env.GEMINI_CHAT_MODEL ?? 'gemini-2.5-flash',
-    ttsModel: process.env.GEMINI_TTS_MODEL ?? 'gemini-2.5-flash-preview-tts',
+    // "-latest" tracks Google's current recommended flash model, so this
+    // stays valid as older dated models (gemini-2.5-flash, etc.) get retired.
+    chatModel: process.env.GEMINI_CHAT_MODEL ?? 'gemini-flash-latest',
+    ttsModel: process.env.GEMINI_TTS_MODEL ?? 'gemini-3.1-flash-tts-preview',
   },
 });
